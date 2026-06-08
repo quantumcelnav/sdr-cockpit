@@ -17,11 +17,13 @@ from cockpit.receivers.adsb import ADSBReceiver
 from cockpit.receivers.voice import VoiceReceiver
 from cockpit.receivers.spectrum import SpectrumReceiver
 from cockpit.receivers.sweep import AntennaSweeeper
+from cockpit.training.trainer import training_bp
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(name)s %(message)s')
 log = logging.getLogger(__name__)
 
 app = Flask(__name__, template_folder='ui/templates', static_folder='ui/static')
+app.register_blueprint(training_bp)
 
 FREQBOOK_PATH = os.path.join(os.path.dirname(__file__), '..', 'data', 'frequencies', 'fort_collins.json')
 

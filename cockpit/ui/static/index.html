@@ -137,6 +137,48 @@ tr.emergency td{color:var(--red);font-weight:bold}
 ::-webkit-scrollbar{width:4px}
 ::-webkit-scrollbar-track{background:var(--bg)}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+
+/* ── TRAINING panel ── */
+#training-panel{flex:1;display:flex;overflow:hidden}
+#training-sidebar{width:220px;flex-shrink:0;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+#training-sidebar-top{padding:8px 10px 6px;border-bottom:1px solid var(--border);flex-shrink:0}
+#training-sidebar-top h3{color:var(--cyan);font-size:10px;letter-spacing:2px;margin-bottom:8px}
+#level-row{display:flex;align-items:center;gap:6px;margin-bottom:2px}
+#level-row label{color:var(--dim);font-size:10px;width:36px;flex-shrink:0}
+#level-slider{flex:1;accent-color:var(--green)}
+#level-label{color:var(--green);font-size:10px;width:80px;text-align:right;flex-shrink:0}
+#module-list{flex:1;overflow-y:auto;padding:6px 0}
+.mod-header{color:var(--dim);font-size:10px;letter-spacing:1px;padding:6px 10px 3px;position:sticky;top:0;background:var(--bg2)}
+.lesson-entry{padding:5px 14px;cursor:pointer;font-size:11px;color:var(--text);border-bottom:1px solid #0d1117;display:flex;align-items:center;gap:6px}
+.lesson-entry:hover{background:var(--bg3)}
+.lesson-entry.active{background:rgba(0,255,136,0.08);border-left:3px solid var(--green);padding-left:11px}
+.lesson-icon{font-size:14px;line-height:1}
+#training-main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+#training-header{background:var(--bg2);border-bottom:1px solid var(--border);padding:8px 14px;flex-shrink:0}
+#training-lesson-title{color:var(--green);font-size:14px;letter-spacing:2px}
+#training-module-tag{color:var(--dim);font-size:10px;margin-top:2px}
+#training-content{flex:1;overflow-y:auto;padding:14px}
+.section-card{background:var(--bg2);border:1px solid var(--border);border-radius:3px;margin-bottom:14px;overflow:hidden}
+.section-title{background:var(--bg3);padding:6px 12px;color:var(--cyan);font-size:10px;letter-spacing:1px;border-bottom:1px solid var(--border)}
+.section-body{padding:10px 12px}
+.section-headline{color:var(--green);font-size:12px;margin-bottom:8px;line-height:1.4}
+.section-text{color:var(--text);font-size:11px;line-height:1.7;white-space:pre-wrap}
+.section-text strong{color:var(--cyan)}
+.key-point{background:var(--bg3);border-left:3px solid var(--yellow);padding:6px 10px;margin-top:10px;color:var(--yellow);font-size:10px;line-height:1.5}
+.sdr-demo-btn{display:inline-flex;align-items:center;gap:6px;background:var(--bg3);border:1px solid var(--purple);color:var(--purple);padding:4px 10px;cursor:pointer;font-family:var(--font);font-size:10px;border-radius:2px;margin-top:8px}
+.sdr-demo-btn:hover{background:var(--purple);color:#000}
+#training-quiz{background:var(--bg2);border-top:2px solid var(--border);padding:12px 14px;flex-shrink:0}
+#training-quiz h3{color:var(--cyan);font-size:10px;letter-spacing:2px;margin-bottom:8px}
+#quiz-q{color:var(--text);font-size:12px;margin-bottom:10px;line-height:1.5}
+#quiz-options{display:flex;flex-direction:column;gap:5px;margin-bottom:10px}
+.quiz-opt{background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:6px 12px;cursor:pointer;font-family:var(--font);font-size:11px;border-radius:2px;text-align:left}
+.quiz-opt:hover{border-color:var(--cyan)}
+.quiz-opt.correct{border-color:var(--green);color:var(--green);background:rgba(0,255,136,.08)}
+.quiz-opt.wrong{border-color:var(--red);color:var(--red);background:rgba(255,51,85,.08)}
+.quiz-opt.reveal-correct{border-color:var(--green);color:var(--green)}
+#quiz-explanation{color:var(--dim);font-size:11px;line-height:1.6;padding:6px 0;display:none}
+#quiz-next{margin-top:6px;display:none}
+#training-empty{display:flex;align-items:center;justify-content:center;flex:1;color:var(--dim);font-size:11px;letter-spacing:1px}
 </style>
 </head>
 <body>
@@ -165,6 +207,7 @@ tr.emergency td{color:var(--red);font-weight:bold}
       <div class="ctab active" onclick="showCenter('map')">MAP</div>
       <div class="ctab" onclick="showCenter('spectrum')">SPECTRUM</div>
       <div class="ctab" onclick="showCenter('sweep')">ANT SWEEP</div>
+      <div class="ctab" onclick="showCenter('training')">TRAINING</div>
     </div>
 
     <!-- MAP -->
@@ -284,6 +327,42 @@ tr.emergency td{color:var(--red);font-weight:bold}
           </div>
           <div id="sweep-canvas-wrap">
             <canvas id="sweep-canvas"></canvas>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TRAINING -->
+    <div class="cpanel" id="cpanel-training">
+      <div id="training-panel">
+
+        <div id="training-sidebar">
+          <div id="training-sidebar-top">
+            <h3>TRAINING</h3>
+            <div id="level-row">
+              <label>LEVEL</label>
+              <input type="range" id="level-slider" min="0" max="4" value="0" oninput="onLevelChange()">
+              <span id="level-label">Beginner</span>
+            </div>
+          </div>
+          <div id="module-list"></div>
+        </div>
+
+        <div id="training-main">
+          <div id="training-header" style="display:none">
+            <div id="training-lesson-title">—</div>
+            <div id="training-module-tag"></div>
+          </div>
+          <div id="training-content">
+            <div id="training-empty">SELECT A LESSON FROM THE LEFT</div>
+          </div>
+          <div id="training-quiz" style="display:none">
+            <h3>KNOWLEDGE CHECK</h3>
+            <div id="quiz-q"></div>
+            <div id="quiz-options"></div>
+            <div id="quiz-explanation"></div>
+            <button class="btn cyan" id="quiz-next" onclick="nextQuiz()">NEXT QUESTION ▶</button>
           </div>
         </div>
 
@@ -957,6 +1036,230 @@ new ResizeObserver(()=>{
 }).observe(document.getElementById('spec-canvas-wrap'));
 
 // ════════════════════════════════════════════════════════════
+// TRAINING
+// ════════════════════════════════════════════════════════════
+let trainingModules=[];
+let trainingLevel='beginner'; // 'beginner' | 'expert'
+let currentLesson=null;
+let quizList=[];
+let quizIdx=0;
+let quizAnswered=false;
+
+const LEVEL_NAMES=['Beginner','Basic','Intermediate','Advanced','Expert'];
+
+function levelToStr(v){
+  if(v<=0) return 'beginner';
+  if(v>=3) return 'expert';
+  return 'beginner';
+}
+
+function onLevelChange(){
+  const v=parseInt(document.getElementById('level-slider').value);
+  document.getElementById('level-label').textContent=LEVEL_NAMES[v];
+  trainingLevel=levelToStr(v);
+  if(currentLesson) loadLesson(currentLesson);
+}
+
+async function loadTrainingModules(){
+  const r=await fetch('/api/training/modules');
+  const d=await r.json();
+  trainingModules=d.modules;
+  renderModuleList();
+}
+
+function renderModuleList(){
+  const el=document.getElementById('module-list');
+  el.innerHTML='';
+  for(const m of trainingModules){
+    const hdr=document.createElement('div');
+    hdr.className='mod-header';
+    hdr.style.color=m.color;
+    hdr.textContent=m.title.toUpperCase();
+    el.appendChild(hdr);
+    for(const l of m.lessons){
+      const row=document.createElement('div');
+      row.className='lesson-entry';
+      row.dataset.id=l.id;
+      row.innerHTML=`<span class="lesson-icon">${l.icon||'▶'}</span><span>${l.title}</span>`;
+      row.onclick=()=>loadLesson(l.id);
+      el.appendChild(row);
+    }
+  }
+}
+
+async function loadLesson(lessonId){
+  currentLesson=lessonId;
+
+  // Highlight selected
+  document.querySelectorAll('.lesson-entry').forEach(e=>{
+    e.classList.toggle('active', e.dataset.id===lessonId);
+  });
+
+  const r=await fetch(`/api/training/lesson/${lessonId}?level=${trainingLevel}`);
+  const d=await r.json();
+  if(d.error){ toast(d.error,true); return; }
+
+  // Header
+  const hdr=document.getElementById('training-header');
+  hdr.style.display='block';
+  hdr.style.borderBottomColor=d.module_color;
+  document.getElementById('training-lesson-title').textContent=d.title;
+  document.getElementById('training-lesson-title').style.color=d.module_color;
+  document.getElementById('training-module-tag').textContent=d.module_title;
+
+  // Sections
+  const content=document.getElementById('training-content');
+  content.innerHTML='';
+
+  for(const sec of d.sections){
+    const card=document.createElement('div');
+    card.className='section-card';
+
+    let demoBtn='';
+    if(sec.sdr_demo){
+      const demo=sec.sdr_demo;
+      const action=demo.action;
+      const note=demo.note||'';
+      let dataAttrs='';
+      for(const [k,v] of Object.entries(demo)){
+        if(k!=='action'&&k!=='note') dataAttrs+=` data-${k.replace(/_/g,'-')}="${v}"`;
+      }
+      demoBtn=`<button class="sdr-demo-btn" data-action="${action}" onclick="runSdrDemo(this)" title="${escHtml(note)}"${dataAttrs}>
+        ◎ SDR DEMO: ${note.substring(0,60)}${note.length>60?'…':''}
+      </button>`;
+    }
+
+    const bodyHtml=escHtml(sec.body).replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');
+
+    card.innerHTML=`
+      <div class="section-title">${escHtml(sec.title)}</div>
+      <div class="section-body">
+        <div class="section-headline">${escHtml(sec.headline)}</div>
+        <div class="section-text">${bodyHtml}</div>
+        ${sec.key_point?`<div class="key-point">KEY POINT: ${escHtml(sec.key_point)}</div>`:''}
+        ${demoBtn}
+      </div>`;
+    content.appendChild(card);
+  }
+
+  // Section-level demo (lesson-wide)
+  if(d.sdr_demo && d.sections.length===0){
+    // handled inline above if sections exist
+  }
+
+  // Quiz
+  quizList=d.quiz||[];
+  quizIdx=0;
+  quizAnswered=false;
+  const quizEl=document.getElementById('training-quiz');
+  if(quizList.length>0){
+    quizEl.style.display='block';
+    renderQuiz();
+  } else {
+    quizEl.style.display='none';
+  }
+}
+
+function renderQuiz(){
+  if(quizIdx>=quizList.length){
+    document.getElementById('quiz-q').textContent='Module complete. Select another lesson.';
+    document.getElementById('quiz-options').innerHTML='';
+    document.getElementById('quiz-next').style.display='none';
+    document.getElementById('quiz-explanation').style.display='none';
+    return;
+  }
+  const q=quizList[quizIdx];
+  quizAnswered=false;
+  document.getElementById('quiz-q').textContent=`Q${quizIdx+1}/${quizList.length}: ${q.q}`;
+  const optEl=document.getElementById('quiz-options');
+  optEl.innerHTML='';
+  for(let i=0;i<q.options.length;i++){
+    const btn=document.createElement('button');
+    btn.className='quiz-opt';
+    btn.textContent=q.options[i];
+    btn.onclick=()=>submitQuiz(i);
+    optEl.appendChild(btn);
+  }
+  document.getElementById('quiz-explanation').style.display='none';
+  document.getElementById('quiz-next').style.display='none';
+}
+
+async function submitQuiz(answerIdx){
+  if(quizAnswered) return;
+  quizAnswered=true;
+
+  const r=await fetch('/api/training/quiz/check',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({lesson_id:currentLesson,q_index:quizIdx,answer:answerIdx,level:trainingLevel})
+  });
+  const d=await r.json();
+
+  const opts=document.querySelectorAll('.quiz-opt');
+  opts.forEach((btn,i)=>{
+    if(i===d.correct_idx) btn.classList.add(d.correct?'correct':'reveal-correct');
+    if(i===answerIdx && !d.correct) btn.classList.add('wrong');
+    btn.onclick=null;
+  });
+
+  const expEl=document.getElementById('quiz-explanation');
+  expEl.textContent=d.explanation;
+  expEl.style.display='block';
+  expEl.style.color=d.correct?'var(--green)':'var(--dim)';
+
+  if(quizIdx+1<quizList.length){
+    document.getElementById('quiz-next').style.display='inline-flex';
+  }
+}
+
+function nextQuiz(){
+  quizIdx++;
+  renderQuiz();
+}
+
+function runSdrDemo(btn){
+  const action=btn.dataset.action;
+  if(action==='spectrum'){
+    const center=parseFloat(btn.dataset.centerHz||100000000)/1e6;
+    document.getElementById('spec-center').value=center.toFixed(3);
+    showCenterByName('spectrum');
+    startSpectrum();
+    toast(`TUNED to ${center.toFixed(3)} MHz`);
+  } else if(action==='sweep'){
+    const low=parseFloat(btn.dataset.freqLowHz||50000000)/1e6;
+    const high=parseFloat(btn.dataset.freqHighHz||1200000000)/1e6;
+    const bin=parseFloat(btn.dataset.binHz||100000)/1e3;
+    document.getElementById('sw-low').value=low;
+    document.getElementById('sw-high').value=high;
+    document.getElementById('sw-bin').value=bin;
+    showCenterByName('sweep');
+    startSweep();
+    toast(`SWEEPING ${low.toFixed(0)}–${high.toFixed(0)} MHz`);
+  } else if(action==='tune_voice'){
+    const freq=parseFloat(btn.dataset.freqHz||162400000);
+    const mode=btn.dataset.mode||'WFM';
+    fetch('/api/voice/tune',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({freq,mode,squelch:-50,name:'Training demo'})});
+    toast(`TUNED voice to ${(freq/1e6).toFixed(3)} MHz ${mode}`);
+  }
+}
+
+function showCenterByName(name){
+  document.querySelectorAll('.cpanel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.ctab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('cpanel-'+name).classList.add('active');
+  const tabs=document.querySelectorAll('.ctab');
+  const names=['map','spectrum','sweep','training'];
+  const idx=names.indexOf(name);
+  if(idx>=0 && tabs[idx]) tabs[idx].classList.add('active');
+  if(name==='sweep') requestAnimationFrame(()=>{ if(sweepResults.length||overlayData) drawSweepChart(); });
+}
+
+function escHtml(s){
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ════════════════════════════════════════════════════════════
 // TABS + UTIL
 // ════════════════════════════════════════════════════════════
 function showCenter(name){
@@ -966,6 +1269,7 @@ function showCenter(name){
   event.target.classList.add('active');
   if(name==='map') setTimeout(()=>map.invalidateSize(),50);
   if(name==='sweep') requestAnimationFrame(()=>{ if(sweepResults.length||overlayData) drawSweepChart(); });
+  if(name==='training' && trainingModules.length===0) loadTrainingModules();
 }
 
 function updateClock(){document.getElementById('clock').textContent=new Date().toLocaleTimeString('en-US',{hour12:false})+' LOCAL'}

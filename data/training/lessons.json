@@ -1,0 +1,298 @@
+{
+  "modules": [
+    {
+      "id": "m1",
+      "title": "Your Radios & the Law",
+      "color": "#00ff88",
+      "lessons": [
+        {
+          "id": "m1l1",
+          "title": "Good News — You Can Already Transmit",
+          "icon": "📻",
+          "sdr_demo": null,
+          "sections": [
+            {
+              "id": "s1",
+              "title": "FRS Is License-Free",
+              "beginner": {
+                "headline": "You don't need a license to use your Belkins.",
+                "body": "The FCC — the government office that manages radio in the US — created a special category called FRS, Family Radio Service, specifically so ordinary people can use short-range walkie-talkies without any paperwork. Your Belkin radios are FRS-certified. That sticker on the back or in the manual that says 'FCC ID' confirms it. You have been being careful for no reason — go ahead and talk to each other.",
+                "key_point": "FRS = no license needed. GMRS = license needed ($35, no test, covers your whole family for 10 years). Your Belkins almost certainly run on FRS power levels."
+              },
+              "expert": {
+                "headline": "FCC Part 95 Subpart B (FRS) vs Subpart E (GMRS) — the distinction matters.",
+                "body": "The 2017 FCC rewrite of Part 95 unified the FRS/GMRS channel plan. FRS is now 22 channels across 462/467 MHz with a 2W ERP ceiling on ch 1–7 and 15–22, 0.5W on ch 8–14 (the interstitial 467 MHz channels), and a non-removable antenna requirement that enforces the power cap. GMRS shares all 22 channels but allows up to 50W on the main 462 MHz channels and permits repeater operation. Your Belkin is almost certainly type-accepted under §95.591 as an FRS device, which means the firmware locks it to ≤2W and the antenna is fixed — you cannot inadvertently operate outside FRS rules. Pull the FCC ID off the label and search fcc.io to confirm.",
+                "key_point": "FRS Part 95B: no license, fixed antenna, ≤2W (ch 1-7, 15-22) or ≤0.5W (ch 8-14). GMRS Part 95E: $35 ULS license, 10 years, covers immediate family, unlocks repeaters and higher power."
+              }
+            },
+            {
+              "id": "s2",
+              "title": "What the Channels Actually Are",
+              "beginner": {
+                "headline": "Think of channels like radio stations, but two-way.",
+                "body": "Your radio has 22 channels. Each one is actually a specific frequency — a spot on the radio dial. Channel 1 is 462.5625 MHz. Channel 14 is the last of the quieter, shorter-range channels. When you pick channel 7 on both radios and talk, you're both using the same frequency, so you can hear each other. This is called simplex — same frequency to send and receive. Nobody owns these channels. Anyone with an FRS radio can use them.",
+                "key_point": "Channel number = a specific frequency. Same channel on both radios = they can talk."
+              },
+              "expert": {
+                "headline": "The 22-channel FRS plan in detail.",
+                "body": "Channels 1–7 and 15–22 sit on the primary GMRS frequencies (462.xxx MHz). Channels 8–14 use the interstitial GMRS input frequencies (467.xxx MHz) — these were historically mobile-to-repeater uplinks in GMRS, which is why FRS caps them at 0.5W; it reduces interference into repeater inputs. All 22 channels use 12.5 kHz channel spacing. Modulation is NFM (narrow FM, ±2.5 kHz deviation). CTCSS/DCS subaudible tones are optional — they don't provide privacy, they just keep your squelch closed when others on the same channel are talking. The SDR will see all traffic regardless of tone settings.",
+                "key_point": "462 MHz main channels (1-7, 15-22): 2W max. 467 MHz interstitials (8-14): 0.5W max. NFM, 12.5 kHz spacing. CTCSS is squelch gating, not encryption."
+              },
+              "sdr_demo": {
+                "action": "sweep",
+                "freq_low_hz": 462500000,
+                "freq_high_hz": 467750000,
+                "bin_hz": 6250,
+                "note": "Sweep the full FRS band to see all 22 channels. Any local traffic will show as spikes."
+              }
+            }
+          ],
+          "quiz": [
+            {
+              "q": "Do you need a license to transmit on your Belkin FRS radios?",
+              "options": ["Yes, always", "No, FRS is license-free", "Only for channels 1-7", "Yes, but only in Colorado"],
+              "answer": 1,
+              "explanation": "FRS (Family Radio Service) is explicitly license-free under FCC Part 95. Your Belkin radios are FRS-certified, so you can transmit without any paperwork."
+            },
+            {
+              "q": "What is CTCSS (the 'privacy codes' on your radio)?",
+              "options": ["It encrypts your voice so others can't hear", "It's a subaudible tone that only opens your squelch when matched — others can still hear you", "It changes the frequency slightly", "It's required by the FCC"],
+              "answer": 1,
+              "explanation_beginner": "Those 'privacy codes' don't actually make your conversation private. They just stop your radio from beeping every time someone else talks on the channel. Anyone with a scanner can hear you regardless.",
+              "explanation_expert": "CTCSS (67–254 Hz) and DCS are analog/digital squelch gating schemes. They're inaudible because they're filtered out of the audio path, but they're present in the FM deviation and visible on an SDR with appropriate demodulation. They provide zero security — they only affect whether your speaker opens."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "m2",
+      "title": "How Radio Works",
+      "color": "#00ccff",
+      "lessons": [
+        {
+          "id": "m2l1",
+          "title": "What Is a Radio Wave?",
+          "icon": "〰",
+          "sdr_demo": {
+            "action": "spectrum",
+            "center_hz": 100000000,
+            "sample_rate": 2048000,
+            "note": "Look at the noise floor. Every spike and ripple is real electromagnetic energy in the room with you right now."
+          },
+          "sections": [
+            {
+              "id": "s1",
+              "title": "Waves You Can't See",
+              "beginner": {
+                "headline": "Radio waves are invisible ripples of energy that travel at the speed of light.",
+                "body": "Drop a stone in a still pond and you see rings spreading outward — that's a wave. Radio works the same way, except the 'pond' is the electromagnetic field that fills all of space, and the 'ripples' travel at 186,000 miles per second. When you key your walkie-talkie, you're dropping a stone in that invisible pond. The rings spread out in all directions. Your partner's radio, anywhere in range, feels those ripples and turns them back into sound.\n\nThe number of ripples per second is called frequency. A slow ripple = low frequency. A fast ripple = high frequency. Your Belkins ripple about 462 million times per second — that's 462 MHz.",
+                "key_point": "Radio waves = invisible energy ripples. Speed of light always. Frequency = ripples per second."
+              },
+              "expert": {
+                "headline": "Maxwell's equations describe all of this, but you already know the physics.",
+                "body": "EM waves are transverse waves — the E and H fields oscillate perpendicular to the direction of propagation and to each other. In free space, propagation velocity is c ≈ 3×10⁸ m/s, giving the fundamental relationship f = c/λ. At 462 MHz, λ = c/f = 3×10⁸ / 4.62×10⁸ ≈ 0.65 m (~25.5 inches). That's why a quarter-wave antenna for FRS is about 6.4 inches — the stubby rubber duck on your Belkin is approximately that length, slightly loaded to compensate for the plastic housing.\n\nThe Poynting vector S = E×H describes power flux in W/m². In the far field (r >> λ) of a point source, S falls as 1/r² — the inverse square law. That 2W FRS radio transmitting from 1 mile away arrives at your antenna as roughly −97 dBm, well above the noise floor on a sensitive receiver.",
+                "key_point": "f·λ = c. At 462 MHz, λ ≈ 65 cm. Quarter-wave antenna ≈ 16.25 cm. Power falls as 1/r²."
+              }
+            },
+            {
+              "id": "s2",
+              "title": "The Spectrum — A Highway with Lanes",
+              "beginner": {
+                "headline": "The radio spectrum is like a giant highway with lanes for every use.",
+                "body": "All the radio waves in the universe share the same 'space,' but they don't crash into each other because they're on different frequencies — different lanes. The government assigns lanes: AM radio gets one section, FM radio another, aircraft get a section, your walkie-talkies get a section, WiFi gets one, your microwave oven leaks into another.\n\nThe SDR radio plugged into your computer can listen to most of these lanes at once. The waterfall display shows you who's active — each flash of color is someone transmitting in that lane right now.",
+                "key_point": "Different frequencies = different 'lanes.' The SDR can watch many lanes simultaneously."
+              },
+              "expert": {
+                "headline": "ITU band designations and what's actually relevant to your hardware.",
+                "body": "The RTL-SDR V4 with R828D covers ~500 kHz–1766 MHz, which spans MF through L-band. Relevant allocations:\n\n• MF/HF (0.5–30 MHz): direct sampling mode on V4, covers shortwave, 40m ham, NVIS\n• VHF Lo (30–88 MHz): FM broadcast, aviation VOR/ILS, some military\n• VHF Hi (108–174 MHz): FM broadcast, aviation comm (AM, 108–137 MHz), NOAA WX, FMN\n• UHF (300–1000 MHz): FRS/GMRS (462/467), P25 public safety (700/800 MHz), GSM/LTE artifacts\n• L-band (1–2 GHz): ADS-B (1090 MHz), GPS (1575/1227 MHz), Iridium (1616–1626 MHz)\n\nYour USMC background means you're already fluent in the SINCGARS/Harris world (30–87.975 MHz, 25 kHz steps, optional HAVE QUICK ECCM). The V4 can receive but not follow HAVE QUICK frequency hops without a timing reference — interesting academically, not operationally exploitable.",
+                "key_point": "RTL-SDR V4: 500 kHz–1766 MHz. Covers MF through L-band. ADS-B at 1090 MHz is near the top of its range but works well with the included dipole pointed up."
+              }
+            }
+          ],
+          "quiz": [
+            {
+              "q": "At 462 MHz, how long is a half-wavelength antenna?",
+              "options": ["About 6 inches", "About 13 inches", "About 3 feet", "Wavelength doesn't affect antenna length"],
+              "answer": 1,
+              "explanation_beginner": "Don't worry about the math — the short answer is that antenna length and frequency are linked. The little stubby antenna on your walkie-talkie is exactly the right length for 462 MHz.",
+              "explanation_expert": "λ/2 = c/(2f) = 3×10⁸/(2×4.62×10⁸) = 0.325 m ≈ 12.8 inches. The Belkin rubber duck is approximately this length with some loading. A full quarter-wave (λ/4 ≈ 6.4 in) over a ground plane would be the minimum resonant length."
+            },
+            {
+              "q": "Why doesn't your WiFi interfere with your walkie-talkie?",
+              "options": ["They use the same frequency but take turns", "They operate on completely different frequencies", "The government prevents it with signal barriers", "WiFi is too weak to matter"],
+              "answer": 1,
+              "explanation": "WiFi uses 2.4 GHz and 5 GHz. Your walkie-talkie uses 462 MHz. These are completely separate frequency ranges — like different radio stations. They coexist without interfering because the receiver is tuned to only one frequency at a time."
+            }
+          ]
+        },
+        {
+          "id": "m2l2",
+          "title": "Modulation — How Voice Rides a Wave",
+          "icon": "📡",
+          "sdr_demo": {
+            "action": "tune_voice",
+            "freq_hz": 162400000,
+            "mode": "WFM",
+            "note": "Tune to NOAA weather radio at 162.400 MHz — a steady, clear FM signal you can hear right now. Watch the waterfall — the signal is the bright vertical stripe."
+          },
+          "sections": [
+            {
+              "id": "s1",
+              "title": "The Carrier and the Message",
+              "beginner": {
+                "headline": "A radio wave by itself carries no information — it's just a steady hum. Modulation is how we stamp a voice onto it.",
+                "body": "Imagine a carrier wave as a steady drumbeat. Your voice can't ride on a steady drumbeat — it needs to change the beat somehow. There are two main ways:\n\n**FM (Frequency Modulation)** — change the speed of the drumbeat slightly, fast when your voice is high, slow when it's low. Your Belkin walkie-talkies use FM. FM radio stations use it too. FM sounds clear and ignores most interference.\n\n**AM (Frequency Modulation)** — change the loudness of the drumbeat instead. Aircraft radios use AM. AM radio stations use it. AM can carry farther but picks up more noise (that's the static you hear on AM radio in a thunderstorm).\n\nYour Belkins use FM. Aircraft between 118–137 MHz use AM. The SDR can decode both.",
+                "key_point": "FM = change the frequency slightly to encode audio. AM = change the amplitude (loudness). FM is cleaner. AM carries farther and was easier to build in 1920."
+              },
+              "expert": {
+                "headline": "NFM, WFM, AM, SSB, and the modulation zoo — which matters for your hardware.",
+                "body": "Your walkie-talkies use **NFM** (Narrow FM, ±2.5 kHz deviation, 12.5 kHz channel spacing — the current standard after the FCC narrowbanding mandate). The SDR's rtl_fm decodes this as 'fm' mode.\n\n**WFM** (Wide FM, ±75 kHz deviation) is broadcast FM radio — the 150 kHz occupied bandwidth is why broadcast stations are spaced 200 kHz apart.\n\n**AM** (double-sideband full carrier) is used throughout aviation 108–137 MHz. The DSB structure means both sidebands carry redundant information — half the spectrum efficiency of SSB but robust to receiver frequency offset.\n\n**SSB** (USB/LSB) is the workhorse of HF — ham, maritime, aeronautical HF (SELCAL uses SSB), military HF. Suppressed carrier means 6 dB advantage over AM in SNR terms but requires phase-coherent demodulation. Your SINCGARS familiarity maps here: SINCGARS is FH-FM, not SSB, but the HF HAVE QUICK variant uses standard aviation AM.\n\n**P25 Phase I** (C4FM) — IMBE vocoded digital NFM used by Larimer County. Detectable on SDR as a distinctive 'motorboat' digital sound. Phase II uses TDMA/H-DQPSK. op25 is the open-source decoder stack.",
+                "key_point": "NFM: your walkie-talkie. WFM: broadcast FM. AM: aviation voice. SSB: HF long-range. P25 C4FM/TDMA: digital public safety. Each needs different demodulation."
+              }
+            }
+          ],
+          "quiz": [
+            {
+              "q": "You hear aircraft on a scanner. What modulation are they using?",
+              "options": ["FM", "AM", "SSB", "Digital P25"],
+              "answer": 1,
+              "explanation": "Aviation voice (118–137 MHz) uses AM. This is a historical standard that has never changed — it has advantages for multi-station access (you can hear multiple aircraft overlapping) and works with simple receivers. FM would be quieter, but the entire global ATC infrastructure runs on AM."
+            },
+            {
+              "q": "Your walkie-talkie uses narrow FM (NFM). What does 'narrow' mean here?",
+              "options": ["The radio is physically narrow", "The frequency deviation is limited to ±2.5 kHz to fit in a 12.5 kHz channel", "The signal doesn't travel as far", "The audio quality is lower quality than needed"],
+              "answer": 1,
+              "explanation_beginner": "After 2013, the FCC required all land mobile radios to switch to 'narrow' channels to fit more users in the same spectrum. Your walkie-talkies are already narrow-band compliant.",
+              "explanation_expert": "The FCC narrowbanding mandate (effective Jan 1, 2013) required all Part 90 land mobile users to migrate from 25 kHz to 12.5 kHz channel plans. FRS was already at 12.5 kHz from inception. NFM peak deviation ±2.5 kHz; occupied BW ≈12.5 kHz by Carson's rule (2(Δf + fm_max) = 2(2.5 + 3.5) = 12 kHz). This gave 2× spectral efficiency vs the old 25 kHz plan."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "m3",
+      "title": "Reading the SDR",
+      "color": "#ffcc00",
+      "lessons": [
+        {
+          "id": "m3l1",
+          "title": "The Waterfall — Seeing Radio",
+          "icon": "🌊",
+          "sdr_demo": {
+            "action": "spectrum",
+            "center_hz": 462637500,
+            "sample_rate": 2048000,
+            "note": "Center the spectrogram on the middle of the FRS band. Try keying your Belkin — you'll see a bright stripe appear instantly."
+          },
+          "sections": [
+            {
+              "id": "s1",
+              "title": "How to Read the Waterfall",
+              "beginner": {
+                "headline": "The waterfall display is the SDR's version of seeing radio.",
+                "body": "The waterfall scrolls downward over time — new data at the top, older data falling away at the bottom. Left to right is frequency (like the FM dial on a car radio). Color shows signal strength: dark/black = quiet, bright green/yellow/white = strong signal.\n\nWhen someone transmits nearby, you'll see a bright vertical stripe appear in the waterfall — that's their signal. It stops the moment they stop transmitting.\n\nTry it: grab one of your Belkin radios, key the button (don't say anything yet if you're still not sure), and watch the SDR screen. You'll see a bright stripe appear exactly where that channel lives.",
+                "key_point": "Time goes down. Frequency goes left-right. Bright = signal. Dark = silence."
+              },
+              "expert": {
+                "headline": "The waterfall is a running spectrogram — power spectral density vs frequency vs time.",
+                "body": "Each row of the waterfall is an FFT frame: N complex IQ samples → N-point FFT → magnitude squared → log → colormap. The RTL-SDR V4 at 2.048 MS/s gives 2 MHz of instantaneous bandwidth. With a 1024-point FFT, frequency resolution = sample_rate/N = 2000 Hz per bin. Temporal resolution (time per row) = N/sample_rate = 0.5 ms per frame, but we're averaging/decimating to ~20 FPS for the browser, so effective time resolution is ~50 ms.\n\nThe cockpit's thermal colormap maps normalized dB to RGB — dark (deep blue/black) at noise floor, bright (yellow/white) at peaks. The auto-scaling tracks a running min/max with 5% IIR weighting so it adapts to the local noise environment without blowing out on strong signals.",
+                "key_point": "Each row = one FFT. Frequency resolution = SR/N. Time resolution = N/SR. Colormap = normalized dB. The cockpit auto-scales with an IIR smoother."
+              }
+            },
+            {
+              "id": "s2",
+              "title": "Finding Your Belkins on the SDR",
+              "beginner": {
+                "headline": "You can watch your own radio conversations on the waterfall.",
+                "body": "Your Belkin's channel frequencies:\n\n• Ch 1: 462.5625 MHz\n• Ch 2: 462.5875 MHz\n• Ch 3: 462.6125 MHz\n• Ch 4: 462.6375 MHz\n• Ch 5: 462.6625 MHz\n• Ch 6: 462.6875 MHz\n• Ch 7: 462.7125 MHz\n• Ch 8–14: 467.5625–467.7125 MHz\n• Ch 15–22: 462.5500–462.7250 MHz\n\nSet the spectrum to center around 462.637 MHz and span 2 MHz. That puts channels 1–7 and 15–22 all in view at once. When you transmit on channel 1, watch 462.5625 MHz light up. The bright stripe is you.",
+                "key_point": "FRS channels 1-7 live at 462.56–462.71 MHz. Tune the SDR there and see your own signal."
+              },
+              "expert": {
+                "headline": "FRS channel plan with exact frequencies — also useful for antenna sweep reference.",
+                "body": "Primary FRS (shared with GMRS, ≤2W ERP):\nCh1: 462.5625 | Ch2: 462.5875 | Ch3: 462.6125 | Ch4: 462.6375\nCh5: 462.6625 | Ch6: 462.6875 | Ch7: 462.7125\nCh15: 462.5500 | Ch16: 462.5750 | Ch17: 462.6000 | Ch18: 462.6250\nCh19: 462.6500 | Ch20: 462.6750 | Ch21: 462.7000 | Ch22: 462.7250\n\nInterstitial FRS (≤0.5W ERP):\nCh8: 467.5625 | Ch9: 467.5875 | Ch10: 467.6125 | Ch11: 467.6375\nCh12: 467.6625 | Ch13: 467.6875 | Ch14: 467.7125\n\nAll are NFM, 12.5 kHz spacing. Bandwidth ≈ 8.5 kHz occupied (Carson). To observe both channel groups simultaneously you need two separate 2 MHz captures or a wideband receiver (HackRF covers 467-462 MHz = 5 MHz separation, no problem). With the V4 at 2 MS/s, you can capture channels 1-7 and 15-22 in one sweep (they span ≈225 kHz), but 8-14 are 5 MHz away and require retuning.",
+                "key_point": "Ch 1-7 and 15-22 fit in one 2 MHz capture centered at 462.637 MHz. Ch 8-14 require separate tune to 467.637 MHz."
+              }
+            }
+          ],
+          "quiz": [
+            {
+              "q": "You see a bright stripe in the waterfall at 462.5875 MHz. Which FRS channel is transmitting?",
+              "options": ["Channel 1", "Channel 2", "Channel 5", "Channel 15"],
+              "answer": 1,
+              "explanation": "462.5875 MHz is FRS Channel 2. Channel 1 is 462.5625 MHz, Channel 5 is 462.6625 MHz, Channel 15 is 462.5500 MHz."
+            },
+            {
+              "q": "In the waterfall display, what does a dark region (no color) indicate?",
+              "options": ["A very strong signal", "No signal — just background noise", "A signal the SDR can't decode", "The SDR has stopped working"],
+              "answer": 1,
+              "explanation": "Dark/black in the waterfall means the noise floor — no signal above background. A bright stripe means a transmitter is active on that frequency."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "m4",
+      "title": "Going Deeper",
+      "color": "#aa88ff",
+      "lessons": [
+        {
+          "id": "m4l1",
+          "title": "Antennas — The Air Interface",
+          "icon": "🗼",
+          "sdr_demo": {
+            "action": "sweep",
+            "freq_low_hz": 400000000,
+            "freq_high_hz": 600000000,
+            "bin_hz": 100000,
+            "note": "Run an antenna sweep 400-600 MHz with your current antenna, then swap to a different antenna and compare overlays. You'll see which antenna performs better in the FRS band."
+          },
+          "sections": [
+            {
+              "id": "s1",
+              "title": "Why Antenna Length Matters",
+              "beginner": {
+                "headline": "An antenna is most efficient when it's a specific length related to the frequency.",
+                "body": "A radio wave has a specific size — its wavelength. An antenna works best when it's tuned to that size — usually a quarter or half of the wavelength long. If the antenna is the wrong length, it's like trying to catch rain with a sieve that has holes too small or too large.\n\nYour Belkin's stubby rubber duck antenna is the right length for 462 MHz. The little magnet-mount antenna that came with the RTL-SDR is a different length — it works okay across many frequencies but isn't optimized for any one of them. That's the tradeoff: a specialized antenna works better on one band, a general antenna works okay on many.",
+                "key_point": "Antenna length = tuned to a specific frequency. Right length = efficient. Wrong length = wasted signal."
+              },
+              "expert": {
+                "headline": "Antenna fundamentals — radiation resistance, gain, pattern, and the VSWR you can't measure without a VNA.",
+                "body": "A half-wave dipole has radiation resistance Rr ≈ 73Ω and gain of 2.15 dBi in free space. The quarter-wave monopole over a perfect ground plane has Rr ≈ 36.5Ω and 5.15 dBi gain (the ground plane provides the missing quarter wave as an image). The rubber duck on the Belkin is a shortened, inductively loaded monopole — Rr may be as low as 5–15Ω, which means most of the transmit power dissipates in loss resistance rather than radiating. For receive-only use (your SDR), this barely matters — the system noise figure dominates.\n\nThe RTL-SDR V4's included dipole is a ~17 cm half-wave tuned nominally for 433 MHz / 868 MHz. For 462 MHz it's slightly long (resonant at ~430 MHz for that length) but usable. For 1090 MHz ADS-B, the included antenna is significantly too long — a 6.5 cm monopole outperforms it. Your antenna sweep tab can empirically compare these without a VNA — look at the received noise floor rather than a known signal, which gives a relative comparison of antenna efficiency.",
+                "key_point": "Dipole: Rr≈73Ω, 2.15 dBi. Monopole/GndPln: Rr≈36.5Ω, 5.15 dBi. Rubber duck: loaded monopole, lower efficiency but OK for RX. Sweep tab = poor man's antenna comparison."
+              }
+            },
+            {
+              "id": "s2",
+              "title": "The Path to Licensing",
+              "beginner": {
+                "headline": "When you're ready to do more, licensing is easier than you think.",
+                "body": "**FRS (where you are now):** Already legal. No license. 22 channels. Good for home, hiking, events within a mile or so.\n\n**GMRS License:** $35 at FCC.gov, no test, covers your entire household for 10 years. Unlocks higher power (up to 50W), repeaters (range of 20+ miles), and more channels. Great next step.\n\n**Ham Technician License:** Free study materials at HamStudy.org, 35-question multiple choice test, ~$15 fee at a local club. Unlocks a huge amount of the radio spectrum, lets you build your own antennas, access thousands of repeaters nationwide, and talk globally via satellites. The test is genuinely not hard — it's not math-heavy.",
+                "key_point": "GMRS: $35, no test, more power and range. Ham Technician: 35 Q multiple choice, $15, opens the whole spectrum."
+              },
+              "expert": {
+                "headline": "Licensing for someone with your background — what's actually useful.",
+                "body": "**GMRS (47 CFR §95.1703):** The $35 ULS fee is trivially worth it for the repeater access alone. The Fort Collins/Loveland area has several GMRS repeaters. Upgrade path from FRS is zero effort.\n\n**Amateur Extra Class:** Given your PHY background, go straight to Extra. Technician (35Q) → General (35Q) → Extra (50Q) can be done in a weekend of study. HamStudy.org pools are public. The test questions are memorization-heavy, not engineering-heavy — you already know the physics, you just need to learn the FCC-specific rules and band plans. Extra unlocks all HF allocations including 160m and the quieter HF segments where the interesting weak-signal work happens.\n\n**Practical value for your setup:** Ham Extra lets you legally transmit on HF for NVIS, experiment with SDR-TX (you'd need a software-defined transmitter like HackRF or PlutoSDR), legally operate on 70cm and 2m with real power, and access the APRS infrastructure as a full participant rather than just a listener.",
+                "key_point": "Go GMRS now ($35, 5 min). Go Ham Extra when ready — weekend study, 3 tests back-to-back at same session. Unlocks HF experimentation with your SDR-TX when you get a HackRF."
+              }
+            }
+          ],
+          "quiz": [
+            {
+              "q": "You want to talk to your wife from 15 miles away. What's the best path forward?",
+              "options": [
+                "Turn up the power on the FRS radio",
+                "Get a GMRS license and use a repeater",
+                "Switch to channel 14 (lower frequency = longer range)",
+                "FRS radios can't do 15 miles regardless of license"
+              ],
+              "answer": 1,
+              "explanation": "GMRS with a repeater is the right answer. The repeater sits on a hilltop, receives your signal, and retransmits it with more power and a better antenna — routinely achieving 20+ mile range. FRS is limited by power (2W max) and no repeater access. Channel number doesn't affect range meaningfully at these frequencies."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
