@@ -1,0 +1,68 @@
+{
+  "location": "Fort Collins, CO",
+  "home_lat": 40.5853,
+  "home_lon": -105.0844,
+  "groups": [
+    {
+      "name": "Aviation — FNL",
+      "color": "#00ccff",
+      "entries": [
+        {"name": "FNL Tower",        "freq": 118700000, "mode": "AM",  "squelch": -50, "tags": ["atc","fnl"]},
+        {"name": "FNL Ground",       "freq": 121800000, "mode": "AM",  "squelch": -50, "tags": ["atc","fnl"]},
+        {"name": "FNL ATIS",         "freq": 120275000, "mode": "AM",  "squelch": -60, "tags": ["atc","fnl","wx"]},
+        {"name": "FNL UNICOM",       "freq": 122800000, "mode": "AM",  "squelch": -50, "tags": ["atc","fnl"]},
+        {"name": "Denver Approach N","freq": 124000000, "mode": "AM",  "squelch": -50, "tags": ["atc"]},
+        {"name": "Denver Center",    "freq": 132750000, "mode": "AM",  "squelch": -50, "tags": ["atc"]},
+        {"name": "Guard 121.5",      "freq": 121500000, "mode": "AM",  "squelch": -60, "tags": ["atc","emergency"]},
+        {"name": "Boulder Muni",     "freq": 119750000, "mode": "AM",  "squelch": -50, "tags": ["atc"]}
+      ]
+    },
+    {
+      "name": "NOAA Weather",
+      "color": "#ffcc00",
+      "entries": [
+        {"name": "NOAA WXJ28 Primary","freq": 162400000, "mode": "WFM", "squelch": -70, "tags": ["noaa","wx"]},
+        {"name": "NOAA 162.550",      "freq": 162550000, "mode": "WFM", "squelch": -70, "tags": ["noaa","wx"]},
+        {"name": "NOAA 162.475",      "freq": 162475000, "mode": "WFM", "squelch": -70, "tags": ["noaa","wx"]}
+      ]
+    },
+    {
+      "name": "Public Safety — Larimer County",
+      "color": "#ff3355",
+      "entries": [
+        {"name": "Larimer Sheriff",   "freq": 855987500, "mode": "P25", "squelch": -50, "tags": ["p25","leo"]},
+        {"name": "Larimer Fire",      "freq": 856987500, "mode": "P25", "squelch": -50, "tags": ["p25","fire"]},
+        {"name": "FC Police",         "freq": 857987500, "mode": "P25", "squelch": -50, "tags": ["p25","leo"]},
+        {"name": "Larimer EMS",       "freq": 858987500, "mode": "P25", "squelch": -50, "tags": ["p25","ems"]},
+        {"name": "Wildfire Air-Gnd",  "freq": 168625000, "mode": "FM",  "squelch": -50, "tags": ["fire","nifc"]}
+      ]
+    },
+    {
+      "name": "Amateur / APRS",
+      "color": "#00ff88",
+      "entries": [
+        {"name": "APRS National",     "freq": 144390000, "mode": "FM",  "squelch": -70, "tags": ["aprs","ham"]},
+        {"name": "FoCo 2m Repeater",  "freq": 146940000, "mode": "FM",  "squelch": -60, "tags": ["ham"]},
+        {"name": "FoCo 70cm Rptr",    "freq": 447925000, "mode": "FM",  "squelch": -60, "tags": ["ham"]},
+        {"name": "ISS Downlink",       "freq": 145800000, "mode": "FM",  "squelch": -60, "tags": ["ham","iss"]}
+      ]
+    },
+    {
+      "name": "Drone / UAS",
+      "color": "#ff8800",
+      "entries": [
+        {"name": "433 MHz RC",        "freq": 433920000, "mode": "FM",  "squelch": -60, "tags": ["drone"], "hw_tier": 1},
+        {"name": "915 MHz RC/ELRS",   "freq": 915000000, "mode": "FM",  "squelch": -60, "tags": ["drone"], "hw_tier": 1},
+        {"name": "DJI OcuSync 2.4G",  "freq": 2400000000,"mode": "WIDE","squelch": -70, "tags": ["drone"], "hw_tier": 4},
+        {"name": "DJI FPV 5.8G",      "freq": 5800000000,"mode": "WIDE","squelch": -70, "tags": ["drone"], "hw_tier": 4}
+      ]
+    },
+    {
+      "name": "Civil Air Patrol",
+      "color": "#aa88ff",
+      "entries": [
+        {"name": "CAP Colorado Wing", "freq": 148150000, "mode": "FM",  "squelch": -60, "tags": ["cap","civil"]}
+      ]
+    }
+  ]
+}
