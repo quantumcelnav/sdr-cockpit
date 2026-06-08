@@ -7,134 +7,136 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
 :root {
-  --bg: #080c10;
-  --bg2: #0d1117;
-  --bg3: #161b22;
-  --border: #21262d;
-  --green: #00ff88;
-  --red: #ff3355;
-  --yellow: #ffcc00;
-  --cyan: #00ccff;
-  --orange: #ff8800;
-  --purple: #aa88ff;
-  --dim: #444c56;
-  --text: #c9d1d9;
-  --font: 'Courier New', monospace;
+  --bg:#080c10;--bg2:#0d1117;--bg3:#161b22;--border:#21262d;
+  --green:#00ff88;--red:#ff3355;--yellow:#ffcc00;--cyan:#00ccff;
+  --orange:#ff8800;--purple:#aa88ff;--dim:#444c56;--text:#c9d1d9;
+  --font:'Courier New',monospace;
 }
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: var(--bg); color: var(--text); font-family: var(--font); font-size: 12px; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:12px;height:100vh;display:flex;flex-direction:column;overflow:hidden}
 
-/* ── Header ── */
-header {
-  background: var(--bg2); border-bottom: 1px solid var(--green);
-  padding: 6px 14px; display: flex; align-items: center; gap: 10px;
-  flex-shrink: 0;
-}
-header h1 { color: var(--green); font-size: 16px; letter-spacing: 4px; }
-.hw-badge { background: var(--bg3); border: 1px solid var(--cyan); color: var(--cyan); padding: 2px 8px; border-radius: 2px; font-size: 10px; letter-spacing: 1px; }
-.hw-badge.tier1 { border-color: var(--green); color: var(--green); }
-.hw-badge.none  { border-color: var(--red); color: var(--red); }
-#clock { margin-left: auto; color: var(--dim); font-size: 11px; letter-spacing: 1px; }
-.status-dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; margin-right: 4px; }
-.dot-green { background: var(--green); box-shadow: 0 0 6px var(--green); }
-.dot-red   { background: var(--red); }
-.dot-dim   { background: var(--dim); }
+/* header */
+header{background:var(--bg2);border-bottom:1px solid var(--green);padding:6px 14px;display:flex;align-items:center;gap:10px;flex-shrink:0}
+header h1{color:var(--green);font-size:16px;letter-spacing:4px}
+.hw-badge{background:var(--bg3);border:1px solid var(--cyan);color:var(--cyan);padding:2px 8px;border-radius:2px;font-size:10px;letter-spacing:1px}
+.hw-badge.tier1{border-color:var(--green);color:var(--green)}
+.hw-badge.none{border-color:var(--red);color:var(--red)}
+#clock{margin-left:auto;color:var(--dim);font-size:11px;letter-spacing:1px}
+.status-dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:4px}
+.dot-green{background:var(--green);box-shadow:0 0 6px var(--green)}
+.dot-red{background:var(--red)}.dot-dim{background:var(--dim)}
 
-/* ── Layout ── */
-.main { display: flex; flex: 1; overflow: hidden; }
+/* layout */
+.main{display:flex;flex:1;overflow:hidden}
 
-/* ── Left panel: freq book ── */
-#freqbook {
-  width: 230px; flex-shrink: 0;
-  background: var(--bg2); border-right: 1px solid var(--border);
-  display: flex; flex-direction: column; overflow: hidden;
-}
-#freqbook h2 { color: var(--cyan); font-size: 10px; letter-spacing: 2px; padding: 8px 10px 6px; border-bottom: 1px solid var(--border); }
-#freq-filter { background: var(--bg3); border: none; border-bottom: 1px solid var(--border); color: var(--text); padding: 5px 10px; font-family: var(--font); font-size: 11px; width: 100%; outline: none; }
-#freq-filter::placeholder { color: var(--dim); }
-#freq-list { flex: 1; overflow-y: auto; }
-.freq-group-header { color: var(--dim); font-size: 10px; letter-spacing: 1px; padding: 6px 10px 3px; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--bg2); }
-.freq-entry {
-  padding: 5px 10px; cursor: pointer; border-bottom: 1px solid #0d1117;
-  display: flex; flex-direction: column; gap: 1px;
-}
-.freq-entry:hover { background: var(--bg3); }
-.freq-entry.active { background: rgba(0,255,136,0.08); border-left: 2px solid var(--green); }
-.freq-entry.unavail { opacity: 0.35; cursor: not-allowed; }
-.freq-name { color: var(--text); font-size: 11px; }
-.freq-mhz  { color: var(--cyan); font-size: 12px; font-weight: bold; }
-.freq-mode { color: var(--dim); font-size: 10px; }
-.freq-tags { display: flex; gap: 3px; flex-wrap: wrap; margin-top: 1px; }
-.tag { font-size: 9px; padding: 0 4px; border-radius: 2px; }
+/* freq book */
+#freqbook{width:230px;flex-shrink:0;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+#freqbook h2{color:var(--cyan);font-size:10px;letter-spacing:2px;padding:8px 10px 6px;border-bottom:1px solid var(--border)}
+#freq-filter{background:var(--bg3);border:none;border-bottom:1px solid var(--border);color:var(--text);padding:5px 10px;font-family:var(--font);font-size:11px;width:100%;outline:none}
+#freq-filter::placeholder{color:var(--dim)}
+#freq-list{flex:1;overflow-y:auto}
+.freq-group-header{color:var(--dim);font-size:10px;letter-spacing:1px;padding:6px 10px 3px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg2)}
+.freq-entry{padding:5px 10px;cursor:pointer;border-bottom:1px solid #0d1117;display:flex;flex-direction:column;gap:1px}
+.freq-entry:hover{background:var(--bg3)}
+.freq-entry.active{background:rgba(0,255,136,0.08);border-left:2px solid var(--green)}
+.freq-entry.unavail{opacity:.35;cursor:not-allowed}
+.freq-name{color:var(--text);font-size:11px}
+.freq-mhz{color:var(--cyan);font-size:12px;font-weight:bold}
+.freq-mode{color:var(--dim);font-size:10px}
+.freq-tags{display:flex;gap:3px;flex-wrap:wrap;margin-top:1px}
+.tag{font-size:9px;padding:0 4px;border-radius:2px}
 
-/* ── Center: map ── */
-#map-panel { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-#map { flex: 1; }
-#adsb-bar {
-  background: var(--bg2); border-top: 1px solid var(--border);
-  padding: 4px 10px; display: flex; gap: 14px; align-items: center;
-  flex-shrink: 0; overflow-x: auto;
-}
-#adsb-bar span { color: var(--dim); font-size: 10px; letter-spacing: 1px; }
-#adsb-count { color: var(--green); font-weight: bold; }
+/* center panel with tabs */
+#center{flex:1;display:flex;flex-direction:column;overflow:hidden}
+#center-tabs{background:var(--bg2);border-bottom:1px solid var(--border);display:flex;gap:0;flex-shrink:0}
+.ctab{padding:6px 16px;cursor:pointer;color:var(--dim);font-size:11px;letter-spacing:2px;border-right:1px solid var(--border);border-bottom:2px solid transparent;transition:color .15s}
+.ctab:hover{color:var(--text)}
+.ctab.active{color:var(--cyan);border-bottom-color:var(--cyan);background:var(--bg3)}
+.cpanel{flex:1;display:none;flex-direction:column;overflow:hidden}
+.cpanel.active{display:flex}
 
-/* ── Right panel: voice + controls ── */
-#right-panel {
-  width: 260px; flex-shrink: 0;
-  background: var(--bg2); border-left: 1px solid var(--border);
-  display: flex; flex-direction: column; overflow: hidden;
-}
+/* map */
+#map{flex:1}
+#adsb-bar{background:var(--bg2);border-top:1px solid var(--border);padding:4px 10px;display:flex;gap:14px;align-items:center;flex-shrink:0;overflow-x:auto}
+#adsb-bar span{color:var(--dim);font-size:10px;letter-spacing:1px}
+#adsb-count{color:var(--green);font-weight:bold}
 
-.rpanel-section { border-bottom: 1px solid var(--border); padding: 8px 10px; flex-shrink: 0; }
-.rpanel-section h3 { color: var(--cyan); font-size: 10px; letter-spacing: 2px; margin-bottom: 6px; }
+/* ── SPECTROGRAM panel ── */
+#spec-panel{flex:1;display:flex;flex-direction:column;background:var(--bg);overflow:hidden}
+#spec-canvas-wrap{flex:1;position:relative;overflow:hidden;background:#000}
+#spec-canvas{display:block;width:100%;height:100%}
+#spec-freq-axis{height:20px;background:var(--bg2);border-top:1px solid var(--border);position:relative;flex-shrink:0}
+#spec-controls{background:var(--bg2);border-top:1px solid var(--border);padding:6px 12px;display:flex;gap:12px;align-items:center;flex-shrink:0;flex-wrap:wrap}
+#spec-controls label{color:var(--dim);font-size:10px;letter-spacing:1px}
+#spec-controls input[type=number]{background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:3px 6px;font-family:var(--font);font-size:11px;width:100px;border-radius:2px;outline:none}
+#spec-controls input[type=number]:focus{border-color:var(--cyan)}
+#spec-cmap{background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:3px 6px;font-family:var(--font);font-size:11px;border-radius:2px;outline:none}
+#spec-status{color:var(--dim);font-size:10px;margin-left:auto}
 
-/* Tune display */
-#tune-display { text-align: center; padding: 6px 0 2px; }
-#tune-freq { color: var(--green); font-size: 22px; font-weight: bold; letter-spacing: 2px; }
-#tune-meta { color: var(--dim); font-size: 10px; margin-top: 2px; }
+/* ── SWEEP panel ── */
+#sweep-panel{flex:1;display:flex;overflow:hidden}
+#sweep-left{width:260px;flex-shrink:0;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;padding:10px}
+#sweep-left h3{color:var(--cyan);font-size:10px;letter-spacing:2px;margin-bottom:8px}
+.form-row{display:flex;flex-direction:column;gap:2px;margin-bottom:8px}
+.form-row label{color:var(--dim);font-size:10px;letter-spacing:1px}
+.form-row input{background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:4px 8px;font-family:var(--font);font-size:11px;border-radius:2px;outline:none;width:100%}
+.form-row input:focus{border-color:var(--cyan)}
+.form-row select{background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:4px 8px;font-family:var(--font);font-size:11px;border-radius:2px;outline:none;width:100%}
+.sweep-preset{background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:3px 8px;cursor:pointer;font-family:var(--font);font-size:10px;border-radius:2px;margin:2px 2px 2px 0;display:inline-block}
+.sweep-preset:hover{border-color:var(--cyan);color:var(--cyan)}
+#sweep-progress-wrap{height:6px;background:var(--bg3);border-radius:3px;margin:8px 0;overflow:hidden;display:none}
+#sweep-progress{height:100%;background:var(--cyan);border-radius:3px;width:0%;transition:width .5s}
+#sweep-right{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--bg)}
+#sweep-canvas-wrap{flex:1;position:relative;overflow:hidden}
+#sweep-canvas{display:block;width:100%;height:100%}
+#sweep-toolbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:5px 12px;display:flex;gap:10px;align-items:center;flex-shrink:0}
+#sweep-toolbar h3{color:var(--cyan);font-size:10px;letter-spacing:2px}
+#saved-list{border-top:1px solid var(--border);padding:8px 0 0;margin-top:8px}
+#saved-list h3{color:var(--cyan);font-size:10px;letter-spacing:2px;margin-bottom:6px}
+.saved-entry{padding:4px 6px;cursor:pointer;border-radius:2px;font-size:10px;display:flex;justify-content:space-between;align-items:center}
+.saved-entry:hover{background:var(--bg3)}
+.saved-entry .saved-label{color:var(--text)}
+.saved-entry .saved-date{color:var(--dim);font-size:9px}
 
-/* Signal meter */
-#sig-meter-wrap { height: 6px; background: var(--bg3); border-radius: 2px; margin: 6px 0 2px; overflow: hidden; }
-#sig-meter { height: 100%; border-radius: 2px; background: var(--green); width: 0%; transition: width 0.2s; }
-#sig-label { color: var(--dim); font-size: 10px; }
+/* right panel */
+#right-panel{width:260px;flex-shrink:0;background:var(--bg2);border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+.rpanel-section{border-bottom:1px solid var(--border);padding:8px 10px;flex-shrink:0}
+.rpanel-section h3{color:var(--cyan);font-size:10px;letter-spacing:2px;margin-bottom:6px}
+#tune-display{text-align:center;padding:6px 0 2px}
+#tune-freq{color:var(--green);font-size:22px;font-weight:bold;letter-spacing:2px}
+#tune-meta{color:var(--dim);font-size:10px;margin-top:2px}
+#sig-meter-wrap{height:6px;background:var(--bg3);border-radius:2px;margin:6px 0 2px;overflow:hidden}
+#sig-meter{height:100%;border-radius:2px;background:var(--green);width:0%;transition:width .2s}
+#sig-label{color:var(--dim);font-size:10px}
+.btn{background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:4px 10px;cursor:pointer;font-family:var(--font);font-size:11px;border-radius:2px}
+.btn:hover{background:var(--border)}
+.btn.primary{border-color:var(--green);color:var(--green)}
+.btn.primary:hover{background:var(--green);color:#000}
+.btn.danger{border-color:var(--red);color:var(--red)}
+.btn.danger:hover{background:var(--red);color:#fff}
+.btn.cyan{border-color:var(--cyan);color:var(--cyan)}
+.btn.cyan:hover{background:var(--cyan);color:#000}
+.btn-row{display:flex;gap:6px;margin-top:6px}
+.slider-row{display:flex;align-items:center;gap:8px;margin:4px 0}
+.slider-row label{color:var(--dim);font-size:10px;width:55px}
+input[type=range]{flex:1;accent-color:var(--cyan)}
+.slider-val{color:var(--cyan);font-size:10px;width:35px;text-align:right}
+#ac-detail{border-top:1px solid var(--border);transition:border-color .3s}
+#ac-table-wrap{flex:1;overflow-y:auto}
+table{width:100%;border-collapse:collapse;font-size:10px}
+th{color:var(--dim);text-align:left;padding:3px 6px;border-bottom:1px solid var(--border);font-size:9px;letter-spacing:1px;position:sticky;top:0;background:var(--bg2)}
+td{padding:3px 6px;border-bottom:1px solid #0d1117}
+tr:hover td{background:var(--bg3);cursor:pointer}
+tr.emergency td{color:var(--red);font-weight:bold}
+.squawk-em{color:var(--red);font-weight:bold}
+#waterfall-wrap{padding:6px 10px;flex-shrink:0}
+#waterfall{width:100%;height:60px;background:#000;border:1px solid var(--border);display:block}
 
-/* Audio controls */
-.btn { background: var(--bg3); border: 1px solid var(--border); color: var(--text); padding: 4px 10px; cursor: pointer; font-family: var(--font); font-size: 11px; border-radius: 2px; }
-.btn:hover { background: var(--border); }
-.btn.primary { border-color: var(--green); color: var(--green); }
-.btn.primary:hover { background: var(--green); color: #000; }
-.btn.danger { border-color: var(--red); color: var(--red); }
-.btn.danger:hover { background: var(--red); color: #fff; }
-.btn-row { display: flex; gap: 6px; margin-top: 6px; }
-
-.slider-row { display: flex; align-items: center; gap: 8px; margin: 4px 0; }
-.slider-row label { color: var(--dim); font-size: 10px; width: 55px; }
-input[type=range] { flex: 1; accent-color: var(--cyan); }
-.slider-val { color: var(--cyan); font-size: 10px; width: 35px; text-align: right; }
-
-/* Aircraft table */
-#ac-table-wrap { flex: 1; overflow-y: auto; }
-table { width: 100%; border-collapse: collapse; font-size: 10px; }
-th { color: var(--dim); text-align: left; padding: 3px 6px; border-bottom: 1px solid var(--border); font-size: 9px; letter-spacing: 1px; position: sticky; top: 0; background: var(--bg2); }
-td { padding: 3px 6px; border-bottom: 1px solid #0d1117; }
-tr:hover td { background: var(--bg3); cursor: pointer; }
-tr.emergency td { color: var(--red); font-weight: bold; }
-.squawk-em { color: var(--red); font-weight: bold; }
-
-/* Selected aircraft detail */
-#ac-detail { border-top: 1px solid var(--border); transition: border-color 0.3s; }
-
-/* Canvas waterfall */
-#waterfall-wrap { padding: 6px 10px; flex-shrink: 0; }
-#waterfall { width: 100%; height: 60px; background: #000; border: 1px solid var(--border); display: block; }
-
-/* Toast */
-#toast { position: fixed; bottom: 16px; right: 16px; background: var(--bg3); border: 1px solid var(--green); color: var(--green); padding: 6px 14px; border-radius: 3px; font-size: 11px; display: none; z-index: 9999; }
-
-/* Scrollbar */
-::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-track { background: var(--bg); }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+/* toast */
+#toast{position:fixed;bottom:16px;right:16px;background:var(--bg3);border:1px solid var(--green);color:var(--green);padding:6px 14px;border-radius:3px;font-size:11px;display:none;z-index:9999}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
 </style>
 </head>
 <body>
@@ -144,6 +146,7 @@ tr.emergency td { color: var(--red); font-weight: bold; }
   <h1>SDR COCKPIT</h1>
   <span class="hw-badge" id="hw-name">detecting...</span>
   <span style="color:var(--dim);font-size:10px" id="voice-status">■ RX OFF</span>
+  <span style="color:var(--dim);font-size:10px" id="spec-hdr-status"></span>
   <span id="clock" style="margin-left:auto"></span>
 </header>
 
@@ -156,19 +159,140 @@ tr.emergency td { color: var(--red); font-weight: bold; }
     <div id="freq-list"></div>
   </div>
 
-  <!-- ── MAP ── -->
-  <div id="map-panel">
-    <div id="map"></div>
-    <div id="adsb-bar">
-      <span><span id="adsb-count">0</span> AIRCRAFT</span>
-      <span id="adsb-emergencies" style="color:var(--red);display:none">⚠ EMERGENCY</span>
-      <span id="adsb-last" style="margin-left:auto">ADS-B: —</span>
+  <!-- ── CENTER TABBED PANEL ── -->
+  <div id="center">
+    <div id="center-tabs">
+      <div class="ctab active" onclick="showCenter('map')">MAP</div>
+      <div class="ctab" onclick="showCenter('spectrum')">SPECTRUM</div>
+      <div class="ctab" onclick="showCenter('sweep')">ANT SWEEP</div>
+    </div>
+
+    <!-- MAP -->
+    <div class="cpanel active" id="cpanel-map">
+      <div id="map"></div>
+      <div id="adsb-bar">
+        <span><span id="adsb-count">0</span> AIRCRAFT</span>
+        <span id="adsb-emergencies" style="color:var(--red);display:none">⚠ EMERGENCY</span>
+        <span id="adsb-last" style="margin-left:auto">ADS-B: —</span>
+      </div>
+    </div>
+
+    <!-- SPECTRUM -->
+    <div class="cpanel" id="cpanel-spectrum">
+      <div id="spec-panel">
+        <div id="spec-canvas-wrap">
+          <canvas id="spec-canvas"></canvas>
+        </div>
+        <div id="spec-freq-axis"></div>
+        <div id="spec-controls">
+          <label>CENTER MHz</label>
+          <input type="number" id="spec-center" value="100" step="0.1" min="0.5" max="1766">
+          <label>SPAN MHz</label>
+          <select id="spec-sr" onchange="updateSpecBW()">
+            <option value="250000">0.25</option>
+            <option value="1024000">1.0</option>
+            <option value="1536000">1.5</option>
+            <option value="2048000" selected>2.0</option>
+          </select>
+          <label>FFT</label>
+          <select id="spec-fft">
+            <option value="512">512</option>
+            <option value="1024" selected>1024</option>
+            <option value="2048">2048</option>
+            <option value="4096">4096</option>
+          </select>
+          <label>CMAP</label>
+          <select id="spec-cmap">
+            <option value="thermal">Thermal</option>
+            <option value="green">Green</option>
+            <option value="purple">Purple</option>
+            <option value="grey">Grey</option>
+          </select>
+          <label>GAIN</label>
+          <input type="number" id="spec-gain" value="40" min="0" max="50" step="0.5" style="width:60px">
+          <button class="btn primary" onclick="startSpectrum()">▶ RX</button>
+          <button class="btn danger" onclick="stopSpectrum()">■ STOP</button>
+          <span id="spec-status">idle</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SWEEP -->
+    <div class="cpanel" id="cpanel-sweep">
+      <div id="sweep-panel">
+
+        <div id="sweep-left">
+          <h3>SWEEP CONFIG</h3>
+
+          <div style="margin-bottom:6px">
+            <span class="sweep-preset" onclick="applyPreset('vhf')">VHF</span>
+            <span class="sweep-preset" onclick="applyPreset('uhf')">UHF</span>
+            <span class="sweep-preset" onclick="applyPreset('full')">FULL</span>
+            <span class="sweep-preset" onclick="applyPreset('aviation')">Aviation</span>
+            <span class="sweep-preset" onclick="applyPreset('pub_safety')">P.Safety</span>
+          </div>
+
+          <div class="form-row">
+            <label>LABEL</label>
+            <input type="text" id="sw-label" placeholder="e.g. Diamond dipole">
+          </div>
+          <div class="form-row">
+            <label>START MHz</label>
+            <input type="number" id="sw-low" value="50" min="0.5" max="1766">
+          </div>
+          <div class="form-row">
+            <label>STOP MHz</label>
+            <input type="number" id="sw-high" value="1200" min="1" max="1766">
+          </div>
+          <div class="form-row">
+            <label>BIN kHz</label>
+            <input type="number" id="sw-bin" value="100" min="1" max="2800">
+          </div>
+          <div class="form-row">
+            <label>GAIN dB</label>
+            <input type="number" id="sw-gain" value="40" min="0" max="50">
+          </div>
+          <div class="form-row">
+            <label>DURATION s</label>
+            <input type="number" id="sw-dur" value="30" min="5" max="300">
+          </div>
+
+          <div id="sweep-progress-wrap">
+            <div id="sweep-progress"></div>
+          </div>
+          <div id="sweep-status-label" style="color:var(--dim);font-size:10px;margin-bottom:6px"></div>
+
+          <div class="btn-row">
+            <button class="btn primary" onclick="startSweep()" style="flex:1">▶ SWEEP</button>
+            <button class="btn danger" onclick="stopSweep()">■</button>
+          </div>
+          <div class="btn-row" style="margin-top:4px">
+            <button class="btn cyan" onclick="saveSweep()" style="flex:1">SAVE</button>
+          </div>
+
+          <div id="saved-list">
+            <h3>SAVED PROFILES</h3>
+            <div id="saved-entries"></div>
+          </div>
+        </div>
+
+        <div id="sweep-right">
+          <div id="sweep-toolbar">
+            <h3>FREQUENCY RESPONSE</h3>
+            <span id="sweep-overlay-label" style="color:var(--dim);font-size:10px;margin-left:8px"></span>
+            <button class="btn" onclick="clearOverlay()" style="margin-left:auto;font-size:10px;padding:2px 8px">CLEAR OVERLAY</button>
+          </div>
+          <div id="sweep-canvas-wrap">
+            <canvas id="sweep-canvas"></canvas>
+          </div>
+        </div>
+
+      </div>
     </div>
   </div>
 
   <!-- ── RIGHT PANEL ── -->
   <div id="right-panel">
-
     <div class="rpanel-section">
       <h3>RECEIVER</h3>
       <div id="tune-display">
@@ -188,7 +312,7 @@ tr.emergency td { color: var(--red); font-weight: bold; }
         <span class="slider-val" id="vol-val">80%</span>
       </div>
       <div class="btn-row">
-        <button class="btn danger" onclick="stopVoice()" style="flex:1">■ STOP</button>
+        <button class="btn danger" onclick="stopVoice()" style="flex:1">■ STOP RX</button>
       </div>
     </div>
 
@@ -197,7 +321,6 @@ tr.emergency td { color: var(--red); font-weight: bold; }
       <canvas id="waterfall"></canvas>
     </div>
 
-    <!-- Selected aircraft detail -->
     <div class="rpanel-section" id="ac-detail" style="display:none;flex-shrink:0">
       <h3>SELECTED AIRCRAFT</h3>
       <div id="ac-detail-body" style="margin-top:4px;line-height:1.8;font-size:11px"></div>
@@ -210,417 +333,647 @@ tr.emergency td { color: var(--red); font-weight: bold; }
       <table>
         <thead><tr>
           <th onclick="cycleSort()" title="click to sort">CALL</th>
-          <th>ICAO</th>
-          <th>ALT</th>
-          <th>SPD</th>
-          <th>HDG</th>
-          <th>SQK</th>
+          <th>ICAO</th><th>ALT</th><th>SPD</th><th>HDG</th><th>SQK</th>
         </tr></thead>
         <tbody id="ac-tbody"></tbody>
       </table>
     </div>
-
   </div>
 </div>
 
 <div id="toast"></div>
-<audio id="audio-el" autoplay style="display:none"></audio>
 
 <script>
-// ── Map ──────────────────────────────────────────────────────────────────────
-const HOME_LAT = 40.5853, HOME_LON = -105.0844;
-const map = L.map('map', { zoomControl: true }).setView([HOME_LAT, HOME_LON], 10);
-L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-  attribution: '&copy; OpenStreetMap &copy; CARTO', maxZoom: 18
-}).addTo(map);
-L.circle([HOME_LAT, HOME_LON], { radius: 500, color: '#00ff88', fillOpacity: 0.3, weight: 1 }).addTo(map);
+// ════════════════════════════════════════════════════════════
+// MAP
+// ════════════════════════════════════════════════════════════
+const HOME_LAT=40.5853, HOME_LON=-105.0844;
+const map = L.map('map',{zoomControl:true}).setView([HOME_LAT,HOME_LON],10);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{
+  attribution:'&copy; OpenStreetMap &copy; CARTO',maxZoom:18}).addTo(map);
+L.circle([HOME_LAT,HOME_LON],{radius:500,color:'#00ff88',fillOpacity:.3,weight:1}).addTo(map);
 
-const aircraftMarkers = {};
-const aircraftLayers = L.layerGroup().addTo(map);
+const aircraftMarkers={};
+const aircraftLayers=L.layerGroup().addTo(map);
 
-function acIcon(ac) {
-  const color = ac.emergency ? '#ff3355' : (ac.on_ground ? '#ffcc00' : '#00ccff');
-  const rot = ac.heading || 0;
-  const label = ac.callsign || ac.icao;
-  const altStr = ac.altitude != null ? Math.round(ac.altitude/100)*100 : '';
-  const html = `<div style="position:relative;width:0;height:0">
+function acIcon(ac){
+  const color=ac.emergency?'#ff3355':ac.on_ground?'#ffcc00':'#00ccff';
+  const rot=ac.heading||0;
+  const label=ac.callsign||ac.icao;
+  const altStr=ac.altitude!=null?Math.round(ac.altitude/100)*100:'';
+  const html=`<div style="position:relative;width:0;height:0">
     <svg width="22" height="22" viewBox="0 0 22 22" style="position:absolute;left:-11px;top:-11px" xmlns="http://www.w3.org/2000/svg">
       <g transform="rotate(${rot},11,11)">
-        <polygon points="11,2 14,20 11,16 8,20" fill="${color}" opacity="0.95" stroke="#000" stroke-width="0.5"/>
+        <polygon points="11,2 14,20 11,16 8,20" fill="${color}" opacity=".95" stroke="#000" stroke-width=".5"/>
       </g>
     </svg>
     <div style="position:absolute;left:12px;top:-8px;white-space:nowrap;font-family:monospace;font-size:10px;color:${color};text-shadow:1px 1px 2px #000,-1px -1px 2px #000;pointer-events:none;line-height:1.3">
-      <span style="font-weight:bold">${label}</span>${altStr ? `<br><span style="font-size:9px;color:#aaa">${altStr}</span>` : ''}
+      <span style="font-weight:bold">${label}</span>${altStr?`<br><span style="font-size:9px;color:#aaa">${altStr}</span>`:''}
     </div>
   </div>`;
-  return L.divIcon({ html, iconSize: [0,0], iconAnchor: [0,0], className: '' });
+  return L.divIcon({html,iconSize:[0,0],iconAnchor:[0,0],className:''});
 }
 
-function updateMap(aircraft) {
-  const seen = new Set();
-  for (const ac of aircraft) {
-    if (ac.lat == null || ac.lon == null) continue;
-    seen.add(ac.icao);
-    if (aircraftMarkers[ac.icao]) {
-      aircraftMarkers[ac.icao].setLatLng([ac.lat, ac.lon]).setIcon(acIcon(ac));
-      aircraftMarkers[ac.icao]._popup && aircraftMarkers[ac.icao].setPopupContent(acPopup(ac));
-    } else {
-      const m = L.marker([ac.lat, ac.lon], { icon: acIcon(ac) })
-        .bindPopup(acPopup(ac))
-        .addTo(aircraftLayers);
-      aircraftMarkers[ac.icao] = m;
-    }
-  }
-  for (const icao of Object.keys(aircraftMarkers)) {
-    if (!seen.has(icao)) {
-      aircraftLayers.removeLayer(aircraftMarkers[icao]);
-      delete aircraftMarkers[icao];
-    }
-  }
-}
-
-function acPopup(ac) {
-  const em = ac.emergency;
-  const sqkLabel = { '7500': '⚠ HIJACK', '7600': '⚠ COMMS LOSS', '7700': '⚠ EMERGENCY' };
-  const rows = [
-    ['CALLSIGN', ac.callsign || '—'],
-    ['N-NUMBER', ac.reg || ac.icao],
-    ['ICAO', ac.icao],
-    ['SQUAWK', ac.squawk ? ac.squawk + (sqkLabel[ac.squawk] ? ' ' + sqkLabel[ac.squawk] : '') : '—'],
-    ['ALTITUDE', ac.altitude != null ? ac.altitude.toLocaleString() + ' ft' : '—'],
-    ['SPEED', ac.speed != null ? Math.round(ac.speed) + ' kts' : '—'],
-    ['HEADING', ac.heading != null ? ac.heading + '°' : '—'],
-    ['ON GROUND', ac.on_ground ? 'YES' : 'no'],
-    ['LAST SEEN', new Date(ac.last_seen * 1000).toLocaleTimeString()],
+function acPopup(ac){
+  const em=ac.emergency;
+  const sqkLabel={'7500':'⚠ HIJACK','7600':'⚠ COMMS LOSS','7700':'⚠ EMERGENCY'};
+  const rows=[
+    ['CALLSIGN',ac.callsign||'—'],['ICAO',ac.icao],
+    ['SQUAWK',ac.squawk?ac.squawk+(sqkLabel[ac.squawk]?' '+sqkLabel[ac.squawk]:''):'—'],
+    ['ALTITUDE',ac.altitude!=null?ac.altitude.toLocaleString()+' ft':'—'],
+    ['SPEED',ac.speed!=null?Math.round(ac.speed)+' kts':'—'],
+    ['HEADING',ac.heading!=null?ac.heading+'°':'—'],
+    ['ON GROUND',ac.on_ground?'YES':'no'],
   ];
   return `<div style="font-family:monospace;font-size:11px;color:#c9d1d9;background:#0d1117;padding:6px 10px;border:1px solid ${em?'#ff3355':'#21262d'};min-width:180px">
-    <div style="color:${em?'#ff3355':'#00ccff'};font-size:13px;font-weight:bold;margin-bottom:5px;border-bottom:1px solid #21262d;padding-bottom:3px">${ac.callsign || ac.icao}</div>
-    ${rows.map(([k,v])=>`<div style="display:flex;gap:8px;margin:2px 0"><span style="color:#444c56;width:80px">${k}</span><span style="color:${k==='SQUAWK'&&em?'#ff3355':'#c9d1d9'}">${v}</span></div>`).join('')}
+    <div style="color:${em?'#ff3355':'#00ccff'};font-size:13px;font-weight:bold;margin-bottom:5px;border-bottom:1px solid #21262d;padding-bottom:3px">${ac.callsign||ac.icao}</div>
+    ${rows.map(([k,v])=>`<div style="display:flex;gap:8px;margin:2px 0"><span style="color:#444c56;width:80px">${k}</span><span>${v}</span></div>`).join('')}
   </div>`;
 }
 
-// ── ADS-B SSE ────────────────────────────────────────────────────────────────
-let adsbData = [];
-function startADSB() {
-  const es = new EventSource('/api/adsb/stream');
-  es.onmessage = e => {
-    const d = JSON.parse(e.data);
-    adsbData = d.aircraft;
-    updateMap(adsbData);
-    renderACTable(adsbData);
-    const em = adsbData.filter(a => a.emergency);
-    document.getElementById('adsb-count').textContent = adsbData.length;
-    document.getElementById('adsb-last').textContent = 'ADS-B: ' + new Date().toLocaleTimeString();
-    const emEl = document.getElementById('adsb-emergencies');
-    emEl.style.display = em.length ? '' : 'none';
-    if (em.length) emEl.textContent = '⚠ SQUAWK ' + em.map(a=>a.squawk).join(', ');
+function updateMap(aircraft){
+  const seen=new Set();
+  for(const ac of aircraft){
+    if(ac.lat==null||ac.lon==null)continue;
+    seen.add(ac.icao);
+    if(aircraftMarkers[ac.icao]){
+      aircraftMarkers[ac.icao].setLatLng([ac.lat,ac.lon]).setIcon(acIcon(ac));
+      if(aircraftMarkers[ac.icao]._popup)aircraftMarkers[ac.icao].setPopupContent(acPopup(ac));
+    } else {
+      aircraftMarkers[ac.icao]=L.marker([ac.lat,ac.lon],{icon:acIcon(ac)}).bindPopup(acPopup(ac)).addTo(aircraftLayers);
+    }
+  }
+  for(const icao of Object.keys(aircraftMarkers)){
+    if(!seen.has(icao)){aircraftLayers.removeLayer(aircraftMarkers[icao]);delete aircraftMarkers[icao];}
+  }
+}
+
+let adsbData=[];
+function startADSB(){
+  const es=new EventSource('/api/adsb/stream');
+  es.onmessage=e=>{
+    const d=JSON.parse(e.data);
+    adsbData=d.aircraft;
+    updateMap(adsbData);renderACTable(adsbData);
+    document.getElementById('adsb-count').textContent=adsbData.length;
+    document.getElementById('adsb-last').textContent='ADS-B: '+new Date().toLocaleTimeString();
+    const em=adsbData.filter(a=>a.emergency);
+    const emEl=document.getElementById('adsb-emergencies');
+    emEl.style.display=em.length?'':'none';
+    if(em.length)emEl.textContent='⚠ SQUAWK '+em.map(a=>a.squawk).join(', ');
   };
-  es.onerror = () => { document.getElementById('adsb-last').textContent = 'ADS-B: disconnected'; };
+  es.onerror=()=>document.getElementById('adsb-last').textContent='ADS-B: disconnected';
 }
 
-const SORT_MODES = ['altitude', 'speed', 'callsign', 'squawk'];
-let sortIdx = 0;
-let selectedIcao = null;
+// ════════════════════════════════════════════════════════════
+// AIRCRAFT TABLE
+// ════════════════════════════════════════════════════════════
+const SORT_MODES=['altitude','speed','callsign','squawk'];
+let sortIdx=0,selectedIcao=null;
 
-function cycleSort() {
-  sortIdx = (sortIdx + 1) % SORT_MODES.length;
-  document.getElementById('ac-sort-label').textContent = 'sort: ' + SORT_MODES[sortIdx].toUpperCase();
+function cycleSort(){
+  sortIdx=(sortIdx+1)%SORT_MODES.length;
+  document.getElementById('ac-sort-label').textContent='sort: '+SORT_MODES[sortIdx].toUpperCase();
   renderACTable(adsbData);
 }
 
-function selectAircraft(icao) {
-  selectedIcao = icao;
-  const ac = adsbData.find(a => a.icao === icao);
-  if (!ac) return;
-  if (ac.lat != null) map.setView([ac.lat, ac.lon], 12);
-  if (aircraftMarkers[icao]) aircraftMarkers[icao].openPopup();
-  showDetail(ac);
-  renderACTable(adsbData);
+function selectAircraft(icao){
+  selectedIcao=icao;
+  const ac=adsbData.find(a=>a.icao===icao);
+  if(!ac)return;
+  if(ac.lat!=null)map.setView([ac.lat,ac.lon],12);
+  if(aircraftMarkers[icao])aircraftMarkers[icao].openPopup();
+  showDetail(ac);renderACTable(adsbData);
 }
 
-function showDetail(ac) {
-  const sqkLabel = { '7500': '⚠ HIJACK', '7600': '⚠ COMMS LOST', '7700': '⚠ EMERGENCY' };
-  const em = ac.emergency;
-  const fields = [
-    ['CALLSIGN', ac.callsign || '—'],
-    ['N / ICAO',  ac.icao],
-    ['SQUAWK',   ac.squawk ? ac.squawk + (sqkLabel[ac.squawk] ? ' ' + sqkLabel[ac.squawk] : '') : '—'],
-    ['ALTITUDE', ac.altitude != null ? ac.altitude.toLocaleString() + ' ft' : '—'],
-    ['SPEED',    ac.speed != null ? Math.round(ac.speed) + ' kts' : '—'],
-    ['HEADING',  ac.heading != null ? ac.heading + '°' : '—'],
-    ['ON GROUND',ac.on_ground ? 'YES' : 'no'],
-    ['POSITION', ac.lat != null ? ac.lat.toFixed(4) + ', ' + ac.lon.toFixed(4) : '—'],
+function showDetail(ac){
+  const em=ac.emergency;
+  const sqkLabel={'7500':'⚠ HIJACK','7600':'⚠ COMMS LOST','7700':'⚠ EMERGENCY'};
+  const fields=[
+    ['CALLSIGN',ac.callsign||'—'],['N / ICAO',ac.icao],
+    ['SQUAWK',ac.squawk?ac.squawk+(sqkLabel[ac.squawk]?' '+sqkLabel[ac.squawk]:''):'—'],
+    ['ALTITUDE',ac.altitude!=null?ac.altitude.toLocaleString()+' ft':'—'],
+    ['SPEED',ac.speed!=null?Math.round(ac.speed)+' kts':'—'],
+    ['HEADING',ac.heading!=null?ac.heading+'°':'—'],
+    ['ON GROUND',ac.on_ground?'YES':'no'],
+    ['POSITION',ac.lat!=null?ac.lat.toFixed(4)+', '+ac.lon.toFixed(4):'—'],
   ];
-  document.getElementById('ac-detail-body').innerHTML = fields.map(([k,v]) =>
+  document.getElementById('ac-detail-body').innerHTML=fields.map(([k,v])=>
     `<div style="display:flex;gap:6px"><span style="color:var(--dim);width:78px;flex-shrink:0">${k}</span><span style="color:${k==='SQUAWK'&&em?'var(--red)':k==='CALLSIGN'?'var(--cyan)':'var(--text)'}">${v}</span></div>`
   ).join('');
-  const det = document.getElementById('ac-detail');
-  det.style.display = '';
-  det.style.borderColor = em ? 'var(--red)' : '';
+  const det=document.getElementById('ac-detail');
+  det.style.display='';det.style.borderColor=em?'var(--red)':'';
 }
 
-function renderACTable(aircraft) {
-  const key = SORT_MODES[sortIdx];
-  const sorted = [...aircraft].sort((a,b) => {
-    if (key === 'altitude') return (b.altitude||0)-(a.altitude||0);
-    if (key === 'speed')    return (b.speed||0)-(a.speed||0);
-    if (key === 'callsign') return (a.callsign||a.icao).localeCompare(b.callsign||b.icao);
-    if (key === 'squawk')   return (a.squawk||'9999').localeCompare(b.squawk||'9999');
+function renderACTable(aircraft){
+  const key=SORT_MODES[sortIdx];
+  const sorted=[...aircraft].sort((a,b)=>{
+    if(key==='altitude')return(b.altitude||0)-(a.altitude||0);
+    if(key==='speed')return(b.speed||0)-(a.speed||0);
+    if(key==='callsign')return(a.callsign||a.icao).localeCompare(b.callsign||b.icao);
+    if(key==='squawk')return(a.squawk||'9999').localeCompare(b.squawk||'9999');
     return 0;
   });
-  document.getElementById('ac-tbody').innerHTML = sorted.map(ac => {
-    const em = ac.emergency;
-    const sel = ac.icao === selectedIcao;
-    return `<tr class="${em?'emergency':''}" style="${sel?'background:rgba(0,204,255,0.1);outline:1px solid var(--cyan);':''}" onclick="selectAircraft('${ac.icao}')">
+  document.getElementById('ac-tbody').innerHTML=sorted.map(ac=>{
+    const em=ac.emergency,sel=ac.icao===selectedIcao;
+    return`<tr class="${em?'emergency':''}" style="${sel?'background:rgba(0,204,255,0.1);outline:1px solid var(--cyan);':''}" onclick="selectAircraft('${ac.icao}')">
       <td style="color:${em?'var(--red)':sel?'var(--green)':'var(--cyan)'};font-weight:${sel?'bold':'normal'}">${ac.callsign||'—'}</td>
       <td style="color:var(--dim);font-size:10px">${ac.icao}</td>
-      <td>${ac.altitude != null ? ac.altitude.toLocaleString() : '—'}</td>
-      <td>${ac.speed != null ? Math.round(ac.speed) : '—'}</td>
-      <td style="color:var(--dim)">${ac.heading != null ? ac.heading+'°' : '—'}</td>
+      <td>${ac.altitude!=null?ac.altitude.toLocaleString():'—'}</td>
+      <td>${ac.speed!=null?Math.round(ac.speed):'—'}</td>
+      <td style="color:var(--dim)">${ac.heading!=null?ac.heading+'°':'—'}</td>
       <td class="${em?'squawk-em':''}">${ac.squawk||'—'}</td>
     </tr>`;
   }).join('');
 }
 
-// ── Freq Book ────────────────────────────────────────────────────────────────
-let freqbook = null;
-let activeFreq = null;
+// ════════════════════════════════════════════════════════════
+// FREQ BOOK
+// ════════════════════════════════════════════════════════════
+let freqbook=null,activeFreq=null;
 
-const GROUP_COLORS = {
-  'Aviation — FNL': '#00ccff',
-  'NOAA Weather': '#ffcc00',
-  'Public Safety — Larimer County': '#ff3355',
-  'Amateur / APRS': '#00ff88',
-  'Drone / UAS': '#ff8800',
-  'Civil Air Patrol': '#aa88ff',
-};
-
-async function loadFreqbook() {
-  const r = await fetch('/api/freqbook');
-  freqbook = await r.json();
+async function loadFreqbook(){
+  const r=await fetch('/api/freqbook');
+  freqbook=await r.json();
   renderFreqbook('');
 }
 
-function filterFreqs() {
-  renderFreqbook(document.getElementById('freq-filter').value.toLowerCase());
-}
+function filterFreqs(){renderFreqbook(document.getElementById('freq-filter').value.toLowerCase())}
 
-function renderFreqbook(filter) {
-  if (!freqbook) return;
-  const hw = hwProfile;
-  const hwTier = hw ? (hw.hw_tier || 1) : 0;
-
-  let html = '';
-  for (const grp of freqbook.groups) {
-    const entries = grp.entries.filter(e =>
-      !filter || e.name.toLowerCase().includes(filter) ||
-      fmtMHz(e.freq).includes(filter) || (e.tags||[]).some(t=>t.includes(filter))
-    );
-    if (!entries.length) continue;
-    html += `<div class="freq-group-header" style="color:${grp.color}">${grp.name}</div>`;
-    for (const e of entries) {
-      const tier = e.hw_tier || 1;
-      const unavail = tier > hwTier;
-      const isActive = activeFreq && activeFreq.freq === e.freq;
-      const tags = (e.tags||[]).map(t=>`<span class="tag" style="background:${grp.color}22;color:${grp.color};border:1px solid ${grp.color}44">${t}</span>`).join('');
-      html += `<div class="freq-entry${unavail?' unavail':''}${isActive?' active':''}" onclick="${unavail?'':'tune('+JSON.stringify(e)+')'}">
-        <div class="freq-name">${e.name}${unavail ? ` <span style="color:var(--dim)">[Tier ${tier}]</span>` : ''}</div>
+function renderFreqbook(filter){
+  if(!freqbook)return;
+  const hwTier=hwProfile?hwProfile.hw_tier||1:0;
+  let html='';
+  for(const grp of freqbook.groups){
+    const entries=grp.entries.filter(e=>!filter||e.name.toLowerCase().includes(filter)||(e.tags||[]).some(t=>t.includes(filter)));
+    if(!entries.length)continue;
+    html+=`<div class="freq-group-header" style="color:${grp.color}">${grp.name}</div>`;
+    for(const e of entries){
+      const tier=e.hw_tier||1,unavail=tier>hwTier,isActive=activeFreq&&activeFreq.freq===e.freq;
+      const tags=(e.tags||[]).map(t=>`<span class="tag" style="background:${grp.color}22;color:${grp.color};border:1px solid ${grp.color}44">${t}</span>`).join('');
+      html+=`<div class="freq-entry${unavail?' unavail':''}${isActive?' active':''}" onclick="${unavail?'':'tune('+JSON.stringify(e)+')'}">
+        <div class="freq-name">${e.name}${unavail?` <span style="color:var(--dim)">[T${tier}]</span>`:''}</div>
         <div class="freq-mhz">${fmtMHz(e.freq)} MHz</div>
-        <div class="freq-mode">${e.mode}${unavail ? ' — hardware upgrade required' : ''}</div>
+        <div class="freq-mode">${e.mode}</div>
         <div class="freq-tags">${tags}</div>
       </div>`;
     }
   }
-  document.getElementById('freq-list').innerHTML = html;
+  document.getElementById('freq-list').innerHTML=html;
 }
 
-function fmtMHz(hz) {
-  return (hz/1e6).toFixed(hz >= 1e9 ? 4 : hz >= 1e8 ? 3 : 4);
+function fmtMHz(hz){return(hz/1e6).toFixed(hz>=1e9?4:4)}
+
+// ════════════════════════════════════════════════════════════
+// VOICE
+// ════════════════════════════════════════════════════════════
+let audioCtx=null,audioReader=null,hwProfile=null;
+
+async function loadHW(){
+  const r=await fetch('/api/hw');
+  hwProfile=await r.json();
+  const badge=document.getElementById('hw-name'),dot=document.getElementById('hw-dot');
+  badge.textContent=hwProfile.name+(hwProfile.hw_tier?` [T${hwProfile.hw_tier}]`:'');
+  if(hwProfile.hw_tier>0){badge.className='hw-badge tier1';dot.className='status-dot dot-green';}
+  else{badge.className='hw-badge none';dot.className='status-dot dot-red';}
 }
 
-// ── Voice Control ─────────────────────────────────────────────────────────────
-let audioCtx = null, audioSource = null;
-let hwProfile = null;
-
-async function loadHW() {
-  const r = await fetch('/api/hw');
-  hwProfile = await r.json();
-  const badge = document.getElementById('hw-name');
-  const dot = document.getElementById('hw-dot');
-  badge.textContent = hwProfile.name + (hwProfile.hw_tier ? ` [T${hwProfile.hw_tier}]` : '');
-  if (hwProfile.hw_tier > 0) {
-    badge.className = 'hw-badge tier1';
-    dot.className = 'status-dot dot-green';
-  } else {
-    badge.className = 'hw-badge none';
-    dot.className = 'status-dot dot-red';
-  }
+function updateSqVal(){const v=document.getElementById('sq-slider').value;document.getElementById('sq-val').textContent=v+' dB'}
+function setVolume(){
+  const v=parseFloat(document.getElementById('vol-slider').value);
+  document.getElementById('vol-val').textContent=Math.round(v*100)+'%';
+  if(audioCtx){const g=audioCtx._gainNode;if(g)g.gain.value=v;}
 }
 
-function updateSqVal() {
-  const v = document.getElementById('sq-slider').value;
-  document.getElementById('sq-val').textContent = v + ' dB';
-}
-
-function setVolume() {
-  const v = parseFloat(document.getElementById('vol-slider').value);
-  document.getElementById('vol-val').textContent = Math.round(v*100) + '%';
-  const el = document.getElementById('audio-el');
-  if (el) el.volume = v;
-}
-
-async function tune(entry) {
-  if (!hwProfile || hwProfile.hw_tier === 0) { toast('No SDR hardware detected', true); return; }
-  const squelch = parseInt(document.getElementById('sq-slider').value);
-  const r = await fetch('/api/voice/tune', {
-    method: 'POST',
-    headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({ freq: entry.freq, mode: entry.mode, squelch, name: entry.name })
-  });
-  const d = await r.json();
-  if (!d.ok) { toast(d.error, true); return; }
-  activeFreq = entry;
+async function tune(entry){
+  if(!hwProfile||hwProfile.hw_tier===0){toast('No SDR hardware',true);return}
+  const squelch=parseInt(document.getElementById('sq-slider').value);
+  specStop(); // release device
+  const r=await fetch('/api/voice/tune',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({freq:entry.freq,mode:entry.mode,squelch,name:entry.name})});
+  const d=await r.json();
+  if(!d.ok){toast(d.error,true);return}
+  activeFreq=entry;
   renderFreqbook(document.getElementById('freq-filter').value.toLowerCase());
-  document.getElementById('tune-freq').textContent = fmtMHz(entry.freq) + ' MHz';
-  document.getElementById('tune-meta').textContent = entry.name + ' · ' + entry.mode;
-  document.getElementById('voice-status').textContent = '● RX ' + fmtMHz(entry.freq);
-  document.getElementById('voice-status').style.color = 'var(--green)';
+  document.getElementById('tune-freq').textContent=fmtMHz(entry.freq)+' MHz';
+  document.getElementById('tune-meta').textContent=entry.name+' · '+entry.mode;
+  document.getElementById('voice-status').textContent='● RX '+fmtMHz(entry.freq);
+  document.getElementById('voice-status').style.color='var(--green)';
   startAudioStream();
 }
 
-async function stopVoice() {
-  await fetch('/api/voice/stop', { method: 'POST' });
-  activeFreq = null;
-  renderFreqbook('');
-  document.getElementById('tune-freq').textContent = '— — —';
-  document.getElementById('tune-meta').textContent = 'select a frequency';
-  document.getElementById('voice-status').textContent = '■ RX OFF';
-  document.getElementById('voice-status').style.color = '';
+async function stopVoice(){
+  await fetch('/api/voice/stop',{method:'POST'});
+  activeFreq=null;renderFreqbook('');
+  document.getElementById('tune-freq').textContent='— — —';
+  document.getElementById('tune-meta').textContent='select a frequency';
+  document.getElementById('voice-status').textContent='■ RX OFF';
+  document.getElementById('voice-status').style.color='';
   stopAudioStream();
 }
 
-// ── Audio playback via Web Audio API ─────────────────────────────────────────
-let audioReader = null;
-
-async function startAudioStream() {
+async function startAudioStream(){
   stopAudioStream();
-  if (!window.AudioContext) { toast('No Web Audio API', true); return; }
-  audioCtx = new AudioContext({ sampleRate: 16000 });
-  const vol = parseFloat(document.getElementById('vol-slider').value);
-  const gainNode = audioCtx.createGain();
-  gainNode.gain.value = vol;
-  gainNode.connect(audioCtx.destination);
-
-  const response = await fetch('/stream/audio');
-  const reader = response.body.getReader();
-  audioReader = reader;
-
-  let scheduledUntil = audioCtx.currentTime;
-  const SR = 16000;
-  const CHUNK_SAMPLES = 4096;
-
-  async function pump() {
-    while (true) {
-      let { value, done } = await reader.read();
-      if (done) break;
-      if (!value || value.length < 2) continue;
-      // raw S16LE PCM → Float32
-      const samples = value.length >> 1;
-      const float32 = new Float32Array(samples);
-      const view = new DataView(value.buffer, value.byteOffset, value.byteLength);
-      for (let i = 0; i < samples; i++) {
-        float32[i] = view.getInt16(i*2, true) / 32768;
-      }
-      const buf = audioCtx.createBuffer(1, samples, SR);
-      buf.copyToChannel(float32, 0);
-      const src = audioCtx.createBufferSource();
-      src.buffer = buf;
-      src.connect(gainNode);
-      const now = audioCtx.currentTime;
-      const start = Math.max(scheduledUntil, now + 0.05);
-      src.start(start);
-      scheduledUntil = start + buf.duration;
-
-      // animate signal meter (crude RMS)
-      let sum = 0;
-      for (const s of float32) sum += s*s;
-      const rms = Math.sqrt(sum/float32.length);
-      const pct = Math.min(100, Math.round(rms * 800));
-      const meter = document.getElementById('sig-meter');
-      meter.style.width = pct + '%';
-      meter.style.background = pct > 80 ? 'var(--red)' : pct > 40 ? 'var(--yellow)' : 'var(--green)';
-      document.getElementById('sig-label').textContent = 'SIGNAL: ' + pct + '%';
-
-      // waterfall
-      drawWaterfall(float32);
+  if(!window.AudioContext){toast('No Web Audio API',true);return}
+  audioCtx=new AudioContext({sampleRate:16000});
+  const vol=parseFloat(document.getElementById('vol-slider').value);
+  const gainNode=audioCtx.createGain();gainNode.gain.value=vol;gainNode.connect(audioCtx.destination);
+  audioCtx._gainNode=gainNode;
+  const response=await fetch('/stream/audio');
+  const reader=response.body.getReader();audioReader=reader;
+  let scheduledUntil=audioCtx.currentTime;
+  async function pump(){
+    while(true){
+      let{value,done}=await reader.read();if(done)break;if(!value||value.length<2)continue;
+      const samples=value.length>>1,float32=new Float32Array(samples);
+      const view=new DataView(value.buffer,value.byteOffset,value.byteLength);
+      for(let i=0;i<samples;i++)float32[i]=view.getInt16(i*2,true)/32768;
+      const buf=audioCtx.createBuffer(1,samples,16000);buf.copyToChannel(float32,0);
+      const src=audioCtx.createBufferSource();src.buffer=buf;src.connect(gainNode);
+      const now=audioCtx.currentTime,start=Math.max(scheduledUntil,now+.05);
+      src.start(start);scheduledUntil=start+buf.duration;
+      let sum=0;for(const s of float32)sum+=s*s;
+      const rms=Math.sqrt(sum/float32.length),pct=Math.min(100,Math.round(rms*800));
+      const m=document.getElementById('sig-meter');
+      m.style.width=pct+'%';m.style.background=pct>80?'var(--red)':pct>40?'var(--yellow)':'var(--green)';
+      document.getElementById('sig-label').textContent='SIGNAL: '+pct+'%';
+      drawVoiceWaterfall(float32);
     }
   }
-  pump().catch(() => {});
+  pump().catch(()=>{});
 }
 
-function stopAudioStream() {
-  if (audioReader) { audioReader.cancel(); audioReader = null; }
-  if (audioCtx)    { audioCtx.close(); audioCtx = null; }
-  document.getElementById('sig-meter').style.width = '0%';
-  document.getElementById('sig-label').textContent = 'SIGNAL: —';
+function stopAudioStream(){
+  if(audioReader){audioReader.cancel();audioReader=null}
+  if(audioCtx){audioCtx.close();audioCtx=null}
+  document.getElementById('sig-meter').style.width='0%';
+  document.getElementById('sig-label').textContent='SIGNAL: —';
 }
 
-// ── Waterfall ─────────────────────────────────────────────────────────────────
-const wfCanvas = document.getElementById('waterfall');
-const wfCtx = wfCanvas.getContext('2d');
-const WF_ROWS = 60;
-let wfBuf = [];
+// voice waterfall
+const wfCanvas=document.getElementById('waterfall');
+const wfCtx=wfCanvas.getContext('2d');
+let wfBuf=[];
+function drawVoiceWaterfall(samples){
+  const W=wfCanvas.offsetWidth||240;wfCanvas.width=W;wfCanvas.height=60;
+  const binsz=Math.floor(samples.length/W)||1,row=new Uint8Array(W);
+  for(let i=0;i<W;i++){let sum=0;for(let j=0;j<binsz;j++){const s=samples[i*binsz+j]||0;sum+=s*s;}row[i]=Math.min(255,Math.round(Math.sqrt(sum/binsz)*2000));}
+  wfBuf.push(row);if(wfBuf.length>60)wfBuf.shift();
+  for(let y=0;y<wfBuf.length;y++){const r=wfBuf[y];for(let x=0;x<W;x++){const v=r[x];wfCtx.fillStyle=`rgb(0,${Math.min(255,v*2)},${Math.min(255,v)})`;wfCtx.fillRect(x,60-wfBuf.length+y,1,1);}}
+}
 
-function drawWaterfall(samples) {
-  const W = wfCanvas.offsetWidth || 240;
-  wfCanvas.width = W;
-  wfCanvas.height = WF_ROWS;
+// ════════════════════════════════════════════════════════════
+// SPECTROGRAM
+// ════════════════════════════════════════════════════════════
+let specES=null,specRunning=false;
+const specCanvas=document.getElementById('spec-canvas');
+const specCtx=specCanvas.getContext('2d');
+let specWF=[];      // waterfall rows
+const WF_MAX=400;   // max waterfall rows
 
-  // Simple FFT-lite: bucket samples into W bins, compute avg power
-  const binsz = Math.floor(samples.length / W) || 1;
-  const row = new Uint8Array(W);
-  for (let i = 0; i < W; i++) {
-    let sum = 0;
-    for (let j = 0; j < binsz; j++) {
-      const s = samples[i*binsz+j] || 0;
-      sum += s*s;
-    }
-    row[i] = Math.min(255, Math.round(Math.sqrt(sum/binsz) * 2000));
+const CMAPS={
+  thermal:(v)=>{
+    const r=Math.min(255,v*3),g=Math.min(255,Math.max(0,v*3-255)),b=Math.min(255,Math.max(0,v*3-510));
+    return[r,g,b];
+  },
+  green:(v)=>[0,Math.round(v*255),Math.round(v*80)],
+  purple:(v)=>[Math.round(v*180),0,Math.round(v*255)],
+  grey:(v)=>[Math.round(v*255),Math.round(v*255),Math.round(v*255)],
+};
+
+function startSpectrum(){
+  if(!hwProfile||!hwProfile.hw_tier){toast('No SDR hardware',true);return}
+  stopAudioStream();
+  const center=parseFloat(document.getElementById('spec-center').value)*1e6;
+  const sr=parseInt(document.getElementById('spec-sr').value);
+  const fft=parseInt(document.getElementById('spec-fft').value);
+  const gain=document.getElementById('spec-gain').value;
+  fetch('/api/spectrum/tune',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({center_hz:center,sample_rate:sr,fft_size:fft,gain:gain==='auto'?'auto':parseFloat(gain)})
+  }).then(r=>r.json()).then(d=>{
+    if(!d.ok){toast(d.error,true);return}
+    specRunning=true;specWF=[];
+    document.getElementById('spec-status').textContent='RX '+fmtMHz(center)+'MHz';
+    document.getElementById('spec-hdr-status').textContent='● SPECTRUM';
+    document.getElementById('spec-hdr-status').style.color='var(--cyan)';
+    drawFreqAxis(d.freq_low,d.freq_high);
+    startSpecStream();
+  });
+}
+
+function specStop(){
+  if(specRunning||specES){
+    fetch('/api/spectrum/stop',{method:'POST'});
+    stopSpecStream();
+    specRunning=false;
+    document.getElementById('spec-status').textContent='idle';
+    document.getElementById('spec-hdr-status').textContent='';
   }
-  wfBuf.push(row);
-  if (wfBuf.length > WF_ROWS) wfBuf.shift();
+}
+function stopSpectrum(){specStop();}
 
-  for (let y = 0; y < wfBuf.length; y++) {
-    const r = wfBuf[y];
-    for (let x = 0; x < W; x++) {
-      const v = r[x];
-      wfCtx.fillStyle = `rgb(0,${Math.min(255,v*2)},${Math.min(255,v)})`;
-      wfCtx.fillRect(x, WF_ROWS - wfBuf.length + y, 1, 1);
+function startSpecStream(){
+  if(specES){specES.close();specES=null}
+  specES=new EventSource('/stream/spectrum');
+  specES.onmessage=e=>{
+    const frame=JSON.parse(e.data);
+    renderSpecFrame(frame);
+  };
+  specES.onerror=()=>{if(specRunning)document.getElementById('spec-status').textContent='disconnected';}
+}
+
+function stopSpecStream(){if(specES){specES.close();specES=null}}
+
+let specDbMin=-100,specDbMax=-20;
+
+function renderSpecFrame(frame){
+  const power=frame.power_db;
+  const fft=power.length;
+  const W=specCanvas.offsetWidth||800;
+  const H=specCanvas.offsetHeight||400;
+  specCanvas.width=W;specCanvas.height=H;
+
+  // Auto-scale dB range
+  const mn=Math.min(...power),mx=Math.max(...power);
+  specDbMin=specDbMin*.95+mn*.05;specDbMax=specDbMax*.95+mx*.05;
+  const range=specDbMax-specDbMin||1;
+
+  // Build one row of pixels
+  const row=new Uint8Array(W*3);
+  const cmap=CMAPS[document.getElementById('spec-cmap').value]||CMAPS.thermal;
+  for(let x=0;x<W;x++){
+    const binIdx=Math.round(x/W*fft);
+    const db=power[Math.min(binIdx,fft-1)];
+    const norm=Math.max(0,Math.min(1,(db-specDbMin)/range));
+    const [r,g,b]=cmap(norm);
+    row[x*3]=r;row[x*3+1]=g;row[x*3+2]=b;
+  }
+
+  specWF.push(row);
+  if(specWF.length>WF_MAX)specWF.shift();
+
+  // Render waterfall — newest at bottom
+  const rowH=Math.max(1,Math.floor(H/WF_MAX));
+  const imageData=specCtx.createImageData(W,H);
+  const d=imageData.data;
+  for(let y=0;y<specWF.length;y++){
+    const r=specWF[specWF.length-1-y];
+    const yPx=H-1-(y*rowH);
+    if(yPx<0)break;
+    for(let x=0;x<W;x++){
+      const idx=(yPx*W+x)*4;
+      d[idx]=r[x*3];d[idx+1]=r[x*3+1];d[idx+2]=r[x*3+2];d[idx+3]=255;
     }
+  }
+  specCtx.putImageData(imageData,0,0);
+
+  // Current spectrum line overlay at top
+  const lineY=10;
+  specCtx.strokeStyle='rgba(0,255,136,0.6)';specCtx.lineWidth=1;
+  specCtx.beginPath();
+  for(let x=0;x<W;x++){
+    const binIdx=Math.round(x/W*fft);
+    const db=power[Math.min(binIdx,fft-1)];
+    const yNorm=1-(db-specDbMin)/range;
+    const y=lineY+yNorm*(H*0.25-lineY);
+    x===0?specCtx.moveTo(x,y):specCtx.lineTo(x,y);
+  }
+  specCtx.stroke();
+}
+
+function drawFreqAxis(lowHz,highHz){
+  const ax=document.getElementById('spec-freq-axis');
+  const steps=8,w=ax.offsetWidth||800;
+  let html='';
+  for(let i=0;i<=steps;i++){
+    const f=lowHz+(highHz-lowHz)*(i/steps);
+    const left=Math.round(i/steps*w);
+    html+=`<span style="position:absolute;left:${left}px;transform:translateX(-50%);color:var(--dim);font-size:9px;top:3px">${(f/1e6).toFixed(2)}</span>`;
+  }
+  ax.innerHTML=html;
+}
+
+function updateSpecBW(){
+  const sr=parseInt(document.getElementById('spec-sr').value);
+  // label selected option
+}
+
+// click on spectrum canvas to tune voice to that frequency
+specCanvas.addEventListener('click',e=>{
+  if(!specRunning)return;
+  fetch('/api/spectrum/status').then(r=>r.json()).then(s=>{
+    if(!s.active)return;
+    const rect=specCanvas.getBoundingClientRect();
+    const frac=(e.clientX-rect.left)/rect.width;
+    const freq=Math.round(s.freq_low+frac*(s.freq_high-s.freq_low));
+    document.getElementById('spec-center').value=(freq/1e6).toFixed(3);
+    // Show freq in status
+    document.getElementById('spec-status').textContent='click: '+fmtMHz(freq)+' MHz';
+  });
+});
+
+// ════════════════════════════════════════════════════════════
+// ANTENNA SWEEP
+// ════════════════════════════════════════════════════════════
+const PRESETS={
+  vhf:      {low:30,high:300,bin:50,dur:30,label:'VHF 30-300 MHz'},
+  uhf:      {low:300,high:1200,bin:200,dur:30,label:'UHF 300-1200 MHz'},
+  full:     {low:50,high:1700,bin:500,dur:60,label:'Full RTL Range'},
+  aviation: {low:108,high:137,bin:25,dur:20,label:'Aviation 108-137 MHz'},
+  pub_safety:{low:138,high:870,bin:100,dur:40,label:'Public Safety 138-870 MHz'},
+};
+
+function applyPreset(key){
+  const p=PRESETS[key];if(!p)return;
+  document.getElementById('sw-low').value=p.low;
+  document.getElementById('sw-high').value=p.high;
+  document.getElementById('sw-bin').value=p.bin;
+  document.getElementById('sw-dur').value=p.dur;
+  document.getElementById('sw-label').value=p.label;
+}
+
+let sweepPollTimer=null;
+let sweepResults=[];        // [{label, freqs, power_db}]  up to 2 overlays
+let overlayData=null;
+
+async function startSweep(){
+  if(!hwProfile||!hwProfile.hw_tier){toast('No SDR hardware',true);return}
+  specStop();stopAudioStream();
+  const body={
+    freq_low_hz:parseFloat(document.getElementById('sw-low').value)*1e6,
+    freq_high_hz:parseFloat(document.getElementById('sw-high').value)*1e6,
+    bin_hz:parseFloat(document.getElementById('sw-bin').value)*1e3,
+    gain:parseFloat(document.getElementById('sw-gain').value),
+    total_sec:parseInt(document.getElementById('sw-dur').value),
+    integration_sec:5,
+    label:document.getElementById('sw-label').value||'sweep',
+  };
+  const r=await fetch('/api/sweep/start',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  const d=await r.json();
+  if(!d.ok){toast(d.error,true);return}
+  document.getElementById('sweep-progress-wrap').style.display='block';
+  document.getElementById('sweep-status-label').textContent='Running: '+d.label;
+  sweepPollTimer=setInterval(pollSweep,1000);
+}
+
+async function pollSweep(){
+  const r=await fetch('/api/sweep/status');
+  const d=await r.json();
+  document.getElementById('sweep-progress').style.width=Math.round(d.progress*100)+'%';
+  document.getElementById('sweep-status-label').textContent=d.status+' ('+Math.round(d.progress*100)+'%)';
+  if(d.status==='done'||d.status==='error'||d.status==='idle'){
+    clearInterval(sweepPollTimer);sweepPollTimer=null;
+    document.getElementById('sweep-progress-wrap').style.display='none';
+    if(d.status==='done'){
+      const res=await fetch('/api/sweep/result');
+      const rd=await res.json();
+      if(rd.ok){sweepResults=[{label:rd.meta.label,freqs:rd.freqs,power_db:rd.power_db}];drawSweepChart();}
+    }
+    loadSavedProfiles();
   }
 }
 
-// ── Clock ─────────────────────────────────────────────────────────────────────
-function updateClock() {
-  document.getElementById('clock').textContent = new Date().toLocaleTimeString('en-US',{hour12:false}) + ' LOCAL';
-}
-setInterval(updateClock, 1000);
-updateClock();
-
-// ── Toast ─────────────────────────────────────────────────────────────────────
-function toast(msg, err=false) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.style.display = 'block';
-  t.style.borderColor = err ? 'var(--red)' : 'var(--green)';
-  t.style.color = err ? 'var(--red)' : 'var(--green)';
-  setTimeout(() => t.style.display='none', 3000);
+async function stopSweep(){
+  await fetch('/api/sweep/stop',{method:'POST'});
+  clearInterval(sweepPollTimer);sweepPollTimer=null;
+  document.getElementById('sweep-progress-wrap').style.display='none';
+  document.getElementById('sweep-status-label').textContent='stopped';
 }
 
-// ── Init ──────────────────────────────────────────────────────────────────────
-(async () => {
+async function saveSweep(){
+  const label=document.getElementById('sw-label').value||'sweep';
+  const r=await fetch('/api/sweep/save',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({label})});
+  const d=await r.json();
+  if(d.ok){toast('Saved: '+d.filename);loadSavedProfiles();}
+  else toast(d.error,true);
+}
+
+const sweepCanvas=document.getElementById('sweep-canvas');
+const sweepCtx=sweepCanvas.getContext('2d');
+
+function drawSweepChart(){
+  const W=sweepCanvas.offsetWidth||800,H=sweepCanvas.offsetHeight||400;
+  sweepCanvas.width=W;sweepCanvas.height=H;
+  sweepCtx.fillStyle='#080c10';sweepCtx.fillRect(0,0,W,H);
+
+  const datasets=overlayData?[...sweepResults,{label:overlayData.meta.label+' [overlay]',freqs:overlayData.freqs,power_db:overlayData.power_db,overlay:true}]:[...sweepResults];
+  if(!datasets.length)return;
+
+  // compute global dB range
+  let allDb=datasets.flatMap(d=>d.power_db);
+  let dbMin=Math.min(...allDb)-3,dbMax=Math.max(...allDb)+3;
+  let freqMin=Math.min(...datasets.flatMap(d=>d.freqs));
+  let freqMax=Math.max(...datasets.flatMap(d=>d.freqs));
+
+  const PAD={l:50,r:16,t:20,b:30};
+  const cW=W-PAD.l-PAD.r,cH=H-PAD.t-PAD.b;
+
+  // Grid
+  sweepCtx.strokeStyle='#1a1a2e';sweepCtx.lineWidth=1;
+  const dbSteps=6;
+  for(let i=0;i<=dbSteps;i++){
+    const y=PAD.t+cH*(1-i/dbSteps);
+    sweepCtx.beginPath();sweepCtx.moveTo(PAD.l,y);sweepCtx.lineTo(PAD.l+cW,y);sweepCtx.stroke();
+    const label=(dbMin+(dbMax-dbMin)*i/dbSteps).toFixed(0)+' dB';
+    sweepCtx.fillStyle='#444c56';sweepCtx.font='9px monospace';sweepCtx.textAlign='right';sweepCtx.fillText(label,PAD.l-4,y+3);
+  }
+  const freqSteps=8;
+  for(let i=0;i<=freqSteps;i++){
+    const x=PAD.l+cW*i/freqSteps;
+    sweepCtx.strokeStyle='#1a1a2e';sweepCtx.beginPath();sweepCtx.moveTo(x,PAD.t);sweepCtx.lineTo(x,PAD.t+cH);sweepCtx.stroke();
+    const f=(freqMin+(freqMax-freqMin)*i/freqSteps)/1e6;
+    sweepCtx.fillStyle='#444c56';sweepCtx.font='9px monospace';sweepCtx.textAlign='center';sweepCtx.fillText(f.toFixed(0)+' M',x,PAD.t+cH+14);
+  }
+
+  // Plot each dataset
+  const COLORS=['#00ff88','#00ccff','#ffcc00','#ff3355'];
+  for(let di=0;di<datasets.length;di++){
+    const ds=datasets[di];
+    const col=COLORS[di%COLORS.length];
+    sweepCtx.strokeStyle=ds.overlay?col+'88':col;
+    sweepCtx.lineWidth=ds.overlay?1:1.5;
+    sweepCtx.beginPath();
+    for(let i=0;i<ds.freqs.length;i++){
+      const x=PAD.l+cW*(ds.freqs[i]-freqMin)/(freqMax-freqMin);
+      const y=PAD.t+cH*(1-(ds.power_db[i]-dbMin)/(dbMax-dbMin));
+      i===0?sweepCtx.moveTo(x,y):sweepCtx.lineTo(x,y);
+    }
+    sweepCtx.stroke();
+    // legend
+    sweepCtx.fillStyle=col;sweepCtx.font='10px monospace';sweepCtx.textAlign='left';
+    sweepCtx.fillText(ds.label,PAD.l+6,PAD.t+14+di*14);
+  }
+}
+
+function clearOverlay(){
+  overlayData=null;
+  document.getElementById('sweep-overlay-label').textContent='';
+  drawSweepChart();
+}
+
+async function loadSavedProfiles(){
+  const r=await fetch('/api/sweep/profiles');
+  const list=await r.json();
+  const el=document.getElementById('saved-entries');
+  if(!list.length){el.innerHTML='<div style="color:var(--dim);font-size:10px">no saved sweeps</div>';return}
+  el.innerHTML=list.reverse().map(p=>`
+    <div class="saved-entry">
+      <span>
+        <span class="saved-label">${p.label||p.filename}</span><br>
+        <span class="saved-date">${(p.freq_low_hz/1e6).toFixed(0)}–${(p.freq_high_hz/1e6).toFixed(0)} MHz</span>
+      </span>
+      <span style="display:flex;gap:4px">
+        <span style="cursor:pointer;color:var(--green);font-size:10px" onclick="loadSweepProfile('${p.filename}',false)" title="Load as primary">▶</span>
+        <span style="cursor:pointer;color:var(--cyan);font-size:10px" onclick="loadSweepProfile('${p.filename}',true)" title="Load as overlay">+</span>
+      </span>
+    </div>`).join('');
+}
+
+async function loadSweepProfile(filename,asOverlay){
+  const r=await fetch('/api/sweep/load/'+filename);
+  const d=await r.json();
+  if(!d.ok){toast(d.error,true);return}
+  if(asOverlay){
+    overlayData={meta:d.meta,freqs:d.freqs,power_db:d.power_db};
+    document.getElementById('sweep-overlay-label').textContent='vs '+d.meta.label;
+  } else {
+    sweepResults=[{label:d.meta.label,freqs:d.freqs,power_db:d.power_db}];
+  }
+  drawSweepChart();
+}
+
+window.addEventListener('resize',()=>{if(sweepResults.length)drawSweepChart()});
+
+// ════════════════════════════════════════════════════════════
+// TABS + UTIL
+// ════════════════════════════════════════════════════════════
+function showCenter(name){
+  document.querySelectorAll('.cpanel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.ctab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('cpanel-'+name).classList.add('active');
+  event.target.classList.add('active');
+  if(name==='map')setTimeout(()=>map.invalidateSize(),50);
+  if(name==='sweep'&&sweepResults.length)drawSweepChart();
+}
+
+function updateClock(){document.getElementById('clock').textContent=new Date().toLocaleTimeString('en-US',{hour12:false})+' LOCAL'}
+setInterval(updateClock,1000);updateClock();
+
+function toast(msg,err=false){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.style.display='block';
+  t.style.borderColor=err?'var(--red)':'var(--green)';
+  t.style.color=err?'var(--red)':'var(--green)';
+  setTimeout(()=>t.style.display='none',3000);
+}
+
+// ════════════════════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════════════════════
+(async()=>{
   await loadHW();
   await loadFreqbook();
+  loadSavedProfiles();
   startADSB();
 })();
 </script>
