@@ -131,9 +131,12 @@ def api_voice_tune():
         return jsonify({'ok': False, 'error': 'No SDR hardware'})
     if freq > hw_profile.get('freq_max_hz', 1766e6):
         return jsonify({'ok': False, 'error': f"Exceeds hardware max {hw_profile['freq_max_hz']/1e6:.0f} MHz"})
-    # Stop spectrum if sharing device
+    # All three compete for the single USB device — stop everything first
     if spectrum.is_active():
         spectrum.stop()
+    if sweeper.status == 'running':
+        sweeper.stop()
+    adsb.pause_device()
     voice.current_name = name
     voice.tune(freq, mode, squelch)
     return jsonify({'ok': True, 'freq': freq, 'mode': mode, 'name': name})
@@ -142,6 +145,7 @@ def api_voice_tune():
 @app.route('/api/voice/stop', methods=['POST'])
 def api_voice_stop():
     voice.stop()
+    adsb.resume_device()
     return jsonify({'ok': True})
 
 

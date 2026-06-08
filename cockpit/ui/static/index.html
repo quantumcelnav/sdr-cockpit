@@ -190,6 +190,8 @@ tr.emergency td{color:var(--red);font-weight:bold}
   <span style="color:var(--dim);font-size:10px" id="voice-status">■ RX OFF</span>
   <span style="color:var(--dim);font-size:10px" id="spec-hdr-status"></span>
   <span id="clock" style="margin-left:auto"></span>
+  <span id="dev-state" style="font-size:10px;letter-spacing:1px;padding:2px 8px;border-radius:2px;border:1px solid var(--dim);color:var(--dim)">SDR: ADS-B</span>
+  <button class="btn" id="standby-btn" onclick="standby()" style="font-size:10px;padding:2px 8px">STANDBY</button>
 </header>
 
 <div class="main">
@@ -617,6 +619,36 @@ async function loadHW(){
   else{badge.className='hw-badge none';dot.className='status-dot dot-red';}
 }
 
+// ── Device state badge ────────────────────────────────────────
+function setDevState(mode){
+  const el=document.getElementById('dev-state');
+  const MAP={
+    'adsb':  {text:'SDR: ADS-B', color:'var(--green)',  border:'var(--green)'},
+    'voice': {text:'SDR: VOICE', color:'var(--cyan)',   border:'var(--cyan)'},
+    'spec':  {text:'SDR: SPECTRUM',color:'var(--cyan)', border:'var(--cyan)'},
+    'sweep': {text:'SDR: SWEEP', color:'var(--yellow)', border:'var(--yellow)'},
+    'idle':  {text:'SDR: IDLE',  color:'var(--dim)',    border:'var(--dim)'},
+  };
+  const s=MAP[mode]||MAP.idle;
+  el.textContent=s.text;el.style.color=s.color;el.style.borderColor=s.border;
+}
+
+async function standby(){
+  // Stop voice, spectrum, sweep — let ADS-B reclaim the device
+  await fetch('/api/voice/stop',{method:'POST'});
+  specStop();
+  if(sweepPollTimer){clearInterval(sweepPollTimer);sweepPollTimer=null;}
+  await fetch('/api/sweep/stop',{method:'POST'});
+  activeFreq=null;
+  document.getElementById('tune-freq').textContent='— — —';
+  document.getElementById('tune-meta').textContent='select a frequency';
+  document.getElementById('voice-status').textContent='■ RX OFF';
+  document.getElementById('voice-status').style.color='';
+  stopAudioStream();
+  setDevState('adsb');
+  toast('Standby — ADS-B active');
+}
+
 function updateSqVal(){const v=document.getElementById('sq-slider').value;document.getElementById('sq-val').textContent=v+' dB'}
 function setVolume(){
   const v=parseFloat(document.getElementById('vol-slider').value);
@@ -638,6 +670,7 @@ async function tune(entry){
   document.getElementById('tune-meta').textContent=entry.name+' · '+entry.mode;
   document.getElementById('voice-status').textContent='● RX '+fmtMHz(entry.freq);
   document.getElementById('voice-status').style.color='var(--green)';
+  setDevState('voice');
   startAudioStream();
 }
 
@@ -649,6 +682,7 @@ async function stopVoice(){
   document.getElementById('voice-status').textContent='■ RX OFF';
   document.getElementById('voice-status').style.color='';
   stopAudioStream();
+  setDevState('adsb');
 }
 
 async function startAudioStream(){
@@ -735,6 +769,7 @@ function startSpectrum(){
     document.getElementById('spec-status').textContent='RX '+fmtMHz(center)+'MHz';
     document.getElementById('spec-hdr-status').textContent='● SPECTRUM';
     document.getElementById('spec-hdr-status').style.color='var(--cyan)';
+    setDevState('spec');
     drawFreqAxis(d.freq_low,d.freq_high);
     startSpecStream();
   });
@@ -747,6 +782,7 @@ function specStop(){
     specRunning=false;
     document.getElementById('spec-status').textContent='idle';
     document.getElementById('spec-hdr-status').textContent='';
+    setDevState('adsb');
   }
 }
 function stopSpectrum(){specStop();}
@@ -839,7 +875,7 @@ function updateSpecBW(){
   // label selected option
 }
 
-// click on spectrum canvas to tune voice to that frequency
+// click on spectrum canvas to recenter on clicked frequency
 specCanvas.addEventListener('click',e=>{
   if(!specRunning)return;
   fetch('/api/spectrum/status').then(r=>r.json()).then(s=>{
@@ -847,9 +883,8 @@ specCanvas.addEventListener('click',e=>{
     const rect=specCanvas.getBoundingClientRect();
     const frac=(e.clientX-rect.left)/rect.width;
     const freq=Math.round(s.freq_low+frac*(s.freq_high-s.freq_low));
-    document.getElementById('spec-center').value=(freq/1e6).toFixed(3);
-    // Show freq in status
-    document.getElementById('spec-status').textContent='click: '+fmtMHz(freq)+' MHz';
+    document.getElementById('spec-center').value=(freq/1e6).toFixed(4);
+    startSpectrum(); // retune to clicked center
   });
 });
 
@@ -894,6 +929,7 @@ async function startSweep(){
   if(!d.ok){toast(d.error,true);return}
   document.getElementById('sweep-progress-wrap').style.display='block';
   document.getElementById('sweep-status-label').textContent='Running: '+d.label;
+  setDevState('sweep');
   sweepPollTimer=setInterval(pollSweep,1000);
 }
 
@@ -905,6 +941,7 @@ async function pollSweep(){
   if(d.status==='done'||d.status==='error'||d.status==='idle'){
     clearInterval(sweepPollTimer);sweepPollTimer=null;
     document.getElementById('sweep-progress-wrap').style.display='none';
+    setDevState('adsb');
     if(d.status==='done'){
       const res=await fetch('/api/sweep/result');
       const rd=await res.json();
@@ -919,6 +956,7 @@ async function stopSweep(){
   clearInterval(sweepPollTimer);sweepPollTimer=null;
   document.getElementById('sweep-progress-wrap').style.display='none';
   document.getElementById('sweep-status-label').textContent='stopped';
+  setDevState('adsb');
 }
 
 async function saveSweep(){
