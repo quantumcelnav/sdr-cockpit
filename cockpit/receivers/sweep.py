@@ -29,9 +29,10 @@ class AntennaSweeeper:
 
     def start(self, freq_low_hz: int, freq_high_hz: int, bin_hz: int = 100_000,
               gain: float = 40.0, integration_sec: int = 5,
-              total_sec: int = 30, label: str = ''):
+              total_sec: int = 30, label: str = '', on_done=None):
         if self._running:
             return {'ok': False, 'error': 'Sweep already running'}
+        self._on_done = on_done
 
         os.makedirs(SWEEPS_DIR, exist_ok=True)
         self._outfile = tempfile.mktemp(suffix='.csv')
@@ -60,7 +61,7 @@ class AntennaSweeeper:
         log.info(f"Sweep: {freq_low_hz/1e6:.1f}–{freq_high_hz/1e6:.1f} MHz  bin={bin_hz/1e3:.0f}kHz  {total_sec}s")
         self._running = True
         self._proc = subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        self._thread = threading.Thread(target=self._monitor, args=(total_sec,), daemon=True)
+        self._thread = threading.Thread(target=self._monitor, args=(total_sec, self._on_done), daemon=True)
         self._thread.start()
         return {'ok': True, 'label': self._label}
 
@@ -119,7 +120,7 @@ class AntennaSweeeper:
 
     # ── internals ─────────────────────────────────────────────────────────────
 
-    def _monitor(self, total_sec):
+    def _monitor(self, total_sec, on_done=None):
         start = time.time()
         while self._running and self._proc.poll() is None:
             elapsed = time.time() - start
@@ -127,9 +128,10 @@ class AntennaSweeeper:
             time.sleep(0.5)
 
         self._running = False
-        if self._proc and self._proc.returncode == 0 or os.path.exists(self._outfile or ''):
+        outfile = self._outfile
+        if outfile and os.path.exists(outfile) and os.path.getsize(outfile) > 0:
             try:
-                self.current = self._parse_csv(self._outfile, self._meta)
+                self.current = self._parse_csv(outfile, self._meta)
                 self.status  = 'done'
                 self.progress = 1.0
                 log.info(f"Sweep complete: {len(self.current.get('freqs', []))} bins")
@@ -137,11 +139,16 @@ class AntennaSweeeper:
                 log.error(f"Sweep parse error: {e}")
                 self.status = 'error'
         else:
+            log.error(f"Sweep output empty or missing: {outfile!r}")
             self.status = 'error'
 
-        if self._outfile and os.path.exists(self._outfile):
-            os.unlink(self._outfile)
-            self._outfile = None
+        if outfile and os.path.exists(outfile):
+            os.unlink(outfile)
+        self._outfile = None
+
+        if on_done:
+            try: on_done()
+            except Exception: pass
 
     @staticmethod
     def _parse_csv(path, meta):

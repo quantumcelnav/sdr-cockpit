@@ -70,6 +70,23 @@ class ADSBReceiver:
         self._running = False
         if self._dump1090_proc:
             self._dump1090_proc.terminate()
+            self._dump1090_proc = None
+
+    def pause_device(self):
+        """Kill dump1090 to free the USB device for sweep/spectrum. Keep aircraft cache."""
+        if self._dump1090_proc:
+            log.info("Pausing ADS-B — releasing RTL-SDR device")
+            self._dump1090_proc.terminate()
+            try:
+                self._dump1090_proc.wait(timeout=3)
+            except Exception:
+                self._dump1090_proc.kill()
+            self._dump1090_proc = None
+
+    def resume_device(self):
+        """Restart dump1090 after sweep/spectrum has released the device."""
+        log.info("Resuming ADS-B")
+        self._start_dump1090()
 
     def get_aircraft(self):
         with self._lock:

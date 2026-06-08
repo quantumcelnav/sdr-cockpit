@@ -178,11 +178,10 @@ def api_spectrum_tune():
     if center_hz > hw_profile.get('freq_max_hz', 1766e6):
         return jsonify({'ok': False, 'error': 'Frequency out of range'})
 
-    # RTL-SDR V4: single device — stop voice if active
-    if voice.is_active():
-        voice.stop()
-    if sweeper.status == 'running':
-        sweeper.stop()
+    # Single device — stop everything else, then pause dump1090
+    if voice.is_active():   voice.stop()
+    if sweeper.status == 'running': sweeper.stop()
+    adsb.pause_device()
 
     spectrum.tune(center_hz, sample_rate, fft_size, gain)
     return jsonify({'ok': True, **spectrum.status()})
@@ -191,6 +190,7 @@ def api_spectrum_tune():
 @app.route('/api/spectrum/stop', methods=['POST'])
 def api_spectrum_stop():
     spectrum.stop()
+    adsb.resume_device()
     return jsonify({'ok': True})
 
 
@@ -222,6 +222,8 @@ def api_sweep_start():
     if voice.is_active():  voice.stop()
     if spectrum.is_active(): spectrum.stop()
 
+    adsb.pause_device()    # free USB before rtl_power opens it
+
     result = sweeper.start(
         freq_low_hz=int(d.get('freq_low_hz', 50_000_000)),
         freq_high_hz=int(d.get('freq_high_hz', 1_200_000_000)),
@@ -230,6 +232,7 @@ def api_sweep_start():
         integration_sec=int(d.get('integration_sec', 5)),
         total_sec=int(d.get('total_sec', 30)),
         label=d.get('label', ''),
+        on_done=adsb.resume_device,   # restart dump1090 when sweep finishes
     )
     return jsonify(result)
 
@@ -237,6 +240,7 @@ def api_sweep_start():
 @app.route('/api/sweep/stop', methods=['POST'])
 def api_sweep_stop():
     sweeper.stop()
+    adsb.resume_device()
     return jsonify({'ok': True})
 
 

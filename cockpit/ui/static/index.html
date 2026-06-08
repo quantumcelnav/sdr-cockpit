@@ -64,7 +64,7 @@ header h1{color:var(--green);font-size:16px;letter-spacing:4px}
 /* ── SPECTROGRAM panel ── */
 #spec-panel{flex:1;display:flex;flex-direction:column;background:var(--bg);overflow:hidden}
 #spec-canvas-wrap{flex:1;position:relative;overflow:hidden;background:#000}
-#spec-canvas{display:block;width:100%;height:100%}
+#spec-canvas{position:absolute;inset:0;display:block}
 #spec-freq-axis{height:20px;background:var(--bg2);border-top:1px solid var(--border);position:relative;flex-shrink:0}
 #spec-controls{background:var(--bg2);border-top:1px solid var(--border);padding:6px 12px;display:flex;gap:12px;align-items:center;flex-shrink:0;flex-wrap:wrap}
 #spec-controls label{color:var(--dim);font-size:10px;letter-spacing:1px}
@@ -88,7 +88,7 @@ header h1{color:var(--green);font-size:16px;letter-spacing:4px}
 #sweep-progress{height:100%;background:var(--cyan);border-radius:3px;width:0%;transition:width .5s}
 #sweep-right{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--bg)}
 #sweep-canvas-wrap{flex:1;position:relative;overflow:hidden}
-#sweep-canvas{display:block;width:100%;height:100%}
+#sweep-canvas{position:absolute;inset:0;display:block}
 #sweep-toolbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:5px 12px;display:flex;gap:10px;align-items:center;flex-shrink:0}
 #sweep-toolbar h3{color:var(--cyan);font-size:10px;letter-spacing:2px}
 #saved-list{border-top:1px solid var(--border);padding:8px 0 0;margin-top:8px}
@@ -689,8 +689,10 @@ let specDbMin=-100,specDbMax=-20;
 function renderSpecFrame(frame){
   const power=frame.power_db;
   const fft=power.length;
-  const W=specCanvas.offsetWidth||800;
-  const H=specCanvas.offsetHeight||400;
+  const wrap=document.getElementById('spec-canvas-wrap');
+  const rect=wrap.getBoundingClientRect();
+  const W=Math.round(rect.width)||800;
+  const H=Math.round(rect.height)||400;
   specCanvas.width=W;specCanvas.height=H;
 
   // Auto-scale dB range
@@ -852,7 +854,9 @@ const sweepCanvas=document.getElementById('sweep-canvas');
 const sweepCtx=sweepCanvas.getContext('2d');
 
 function drawSweepChart(){
-  const W=sweepCanvas.offsetWidth||800,H=sweepCanvas.offsetHeight||400;
+  const wrap=document.getElementById('sweep-canvas-wrap');
+  const rect=wrap.getBoundingClientRect();
+  const W=Math.round(rect.width)||800,H=Math.round(rect.height)||400;
   sweepCanvas.width=W;sweepCanvas.height=H;
   sweepCtx.fillStyle='#080c10';sweepCtx.fillRect(0,0,W,H);
 
@@ -942,7 +946,15 @@ async function loadSweepProfile(filename,asOverlay){
   drawSweepChart();
 }
 
-window.addEventListener('resize',()=>{if(sweepResults.length)drawSweepChart()});
+// Redraw sweep chart whenever its container is resized (handles tab reveal too)
+new ResizeObserver(()=>{
+  if(sweepResults.length||overlayData) requestAnimationFrame(drawSweepChart);
+}).observe(document.getElementById('sweep-canvas-wrap'));
+
+// Redraw spec canvas on resize (clears accumulated waterfall — acceptable)
+new ResizeObserver(()=>{
+  if(specRunning) specWF=[];  // dimensions changed, old rows wrong width
+}).observe(document.getElementById('spec-canvas-wrap'));
 
 // ════════════════════════════════════════════════════════════
 // TABS + UTIL
@@ -952,8 +964,8 @@ function showCenter(name){
   document.querySelectorAll('.ctab').forEach(t=>t.classList.remove('active'));
   document.getElementById('cpanel-'+name).classList.add('active');
   event.target.classList.add('active');
-  if(name==='map')setTimeout(()=>map.invalidateSize(),50);
-  if(name==='sweep'&&sweepResults.length)drawSweepChart();
+  if(name==='map') setTimeout(()=>map.invalidateSize(),50);
+  if(name==='sweep') requestAnimationFrame(()=>{ if(sweepResults.length||overlayData) drawSweepChart(); });
 }
 
 function updateClock(){document.getElementById('clock').textContent=new Date().toLocaleTimeString('en-US',{hour12:false})+' LOCAL'}
