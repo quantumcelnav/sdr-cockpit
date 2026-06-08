@@ -121,6 +121,9 @@ tr:hover td { background: var(--bg3); cursor: pointer; }
 tr.emergency td { color: var(--red); font-weight: bold; }
 .squawk-em { color: var(--red); font-weight: bold; }
 
+/* Selected aircraft detail */
+#ac-detail { border-top: 1px solid var(--border); transition: border-color 0.3s; }
+
 /* Canvas waterfall */
 #waterfall-wrap { padding: 6px 10px; flex-shrink: 0; }
 #waterfall { width: 100%; height: 60px; background: #000; border: 1px solid var(--border); display: block; }
@@ -194,12 +197,25 @@ tr.emergency td { color: var(--red); font-weight: bold; }
       <canvas id="waterfall"></canvas>
     </div>
 
-    <div class="rpanel-section" style="flex-shrink:0">
-      <h3>AIRCRAFT</h3>
+    <!-- Selected aircraft detail -->
+    <div class="rpanel-section" id="ac-detail" style="display:none;flex-shrink:0">
+      <h3>SELECTED AIRCRAFT</h3>
+      <div id="ac-detail-body" style="margin-top:4px;line-height:1.8;font-size:11px"></div>
+    </div>
+
+    <div class="rpanel-section" style="flex-shrink:0;padding-bottom:0">
+      <h3>AIRCRAFT <span id="ac-sort-label" style="color:var(--dim);font-weight:normal;font-size:9px">sort: ALT</span></h3>
     </div>
     <div id="ac-table-wrap">
       <table>
-        <thead><tr><th>CALL</th><th>ALT</th><th>SPD</th><th>SQK</th></tr></thead>
+        <thead><tr>
+          <th onclick="cycleSort()" title="click to sort">CALL</th>
+          <th>ICAO</th>
+          <th>ALT</th>
+          <th>SPD</th>
+          <th>HDG</th>
+          <th>SQK</th>
+        </tr></thead>
         <tbody id="ac-tbody"></tbody>
       </table>
     </div>
@@ -225,11 +241,19 @@ const aircraftLayers = L.layerGroup().addTo(map);
 function acIcon(ac) {
   const color = ac.emergency ? '#ff3355' : (ac.on_ground ? '#ffcc00' : '#00ccff');
   const rot = ac.heading || 0;
-  const svg = `<svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-    <g transform="rotate(${rot},10,10)">
-      <polygon points="10,2 13,18 10,15 7,18" fill="${color}" opacity="0.9"/>
-    </g></svg>`;
-  return L.divIcon({ html: svg, iconSize: [20,20], iconAnchor: [10,10], className: '' });
+  const label = ac.callsign || ac.icao;
+  const altStr = ac.altitude != null ? Math.round(ac.altitude/100)*100 : '';
+  const html = `<div style="position:relative;width:0;height:0">
+    <svg width="22" height="22" viewBox="0 0 22 22" style="position:absolute;left:-11px;top:-11px" xmlns="http://www.w3.org/2000/svg">
+      <g transform="rotate(${rot},11,11)">
+        <polygon points="11,2 14,20 11,16 8,20" fill="${color}" opacity="0.95" stroke="#000" stroke-width="0.5"/>
+      </g>
+    </svg>
+    <div style="position:absolute;left:12px;top:-8px;white-space:nowrap;font-family:monospace;font-size:10px;color:${color};text-shadow:1px 1px 2px #000,-1px -1px 2px #000;pointer-events:none;line-height:1.3">
+      <span style="font-weight:bold">${label}</span>${altStr ? `<br><span style="font-size:9px;color:#aaa">${altStr}</span>` : ''}
+    </div>
+  </div>`;
+  return L.divIcon({ html, iconSize: [0,0], iconAnchor: [0,0], className: '' });
 }
 
 function updateMap(aircraft) {
@@ -256,13 +280,22 @@ function updateMap(aircraft) {
 }
 
 function acPopup(ac) {
-  return `<div style="font-family:monospace;font-size:11px;color:#fff;background:#0d1117;padding:4px 8px;border:1px solid #21262d">
-    <b style="color:#00ccff">${ac.callsign || ac.icao}</b><br>
-    ${ac.altitude != null ? `ALT: ${ac.altitude.toLocaleString()} ft<br>` : ''}
-    ${ac.speed != null ? `SPD: ${ac.speed} kts<br>` : ''}
-    ${ac.heading != null ? `HDG: ${ac.heading}°<br>` : ''}
-    ${ac.squawk ? `SQK: ${ac.squawk}${ac.emergency ? ' ⚠ EMERGENCY' : ''}<br>` : ''}
-    ICAO: ${ac.icao}
+  const em = ac.emergency;
+  const sqkLabel = { '7500': '⚠ HIJACK', '7600': '⚠ COMMS LOSS', '7700': '⚠ EMERGENCY' };
+  const rows = [
+    ['CALLSIGN', ac.callsign || '—'],
+    ['N-NUMBER', ac.reg || ac.icao],
+    ['ICAO', ac.icao],
+    ['SQUAWK', ac.squawk ? ac.squawk + (sqkLabel[ac.squawk] ? ' ' + sqkLabel[ac.squawk] : '') : '—'],
+    ['ALTITUDE', ac.altitude != null ? ac.altitude.toLocaleString() + ' ft' : '—'],
+    ['SPEED', ac.speed != null ? Math.round(ac.speed) + ' kts' : '—'],
+    ['HEADING', ac.heading != null ? ac.heading + '°' : '—'],
+    ['ON GROUND', ac.on_ground ? 'YES' : 'no'],
+    ['LAST SEEN', new Date(ac.last_seen * 1000).toLocaleTimeString()],
+  ];
+  return `<div style="font-family:monospace;font-size:11px;color:#c9d1d9;background:#0d1117;padding:6px 10px;border:1px solid ${em?'#ff3355':'#21262d'};min-width:180px">
+    <div style="color:${em?'#ff3355':'#00ccff'};font-size:13px;font-weight:bold;margin-bottom:5px;border-bottom:1px solid #21262d;padding-bottom:3px">${ac.callsign || ac.icao}</div>
+    ${rows.map(([k,v])=>`<div style="display:flex;gap:8px;margin:2px 0"><span style="color:#444c56;width:80px">${k}</span><span style="color:${k==='SQUAWK'&&em?'#ff3355':'#c9d1d9'}">${v}</span></div>`).join('')}
   </div>`;
 }
 
@@ -285,15 +318,68 @@ function startADSB() {
   es.onerror = () => { document.getElementById('adsb-last').textContent = 'ADS-B: disconnected'; };
 }
 
+const SORT_MODES = ['altitude', 'speed', 'callsign', 'squawk'];
+let sortIdx = 0;
+let selectedIcao = null;
+
+function cycleSort() {
+  sortIdx = (sortIdx + 1) % SORT_MODES.length;
+  document.getElementById('ac-sort-label').textContent = 'sort: ' + SORT_MODES[sortIdx].toUpperCase();
+  renderACTable(adsbData);
+}
+
+function selectAircraft(icao) {
+  selectedIcao = icao;
+  const ac = adsbData.find(a => a.icao === icao);
+  if (!ac) return;
+  if (ac.lat != null) map.setView([ac.lat, ac.lon], 12);
+  if (aircraftMarkers[icao]) aircraftMarkers[icao].openPopup();
+  showDetail(ac);
+  renderACTable(adsbData);
+}
+
+function showDetail(ac) {
+  const sqkLabel = { '7500': '⚠ HIJACK', '7600': '⚠ COMMS LOST', '7700': '⚠ EMERGENCY' };
+  const em = ac.emergency;
+  const fields = [
+    ['CALLSIGN', ac.callsign || '—'],
+    ['N / ICAO',  ac.icao],
+    ['SQUAWK',   ac.squawk ? ac.squawk + (sqkLabel[ac.squawk] ? ' ' + sqkLabel[ac.squawk] : '') : '—'],
+    ['ALTITUDE', ac.altitude != null ? ac.altitude.toLocaleString() + ' ft' : '—'],
+    ['SPEED',    ac.speed != null ? Math.round(ac.speed) + ' kts' : '—'],
+    ['HEADING',  ac.heading != null ? ac.heading + '°' : '—'],
+    ['ON GROUND',ac.on_ground ? 'YES' : 'no'],
+    ['POSITION', ac.lat != null ? ac.lat.toFixed(4) + ', ' + ac.lon.toFixed(4) : '—'],
+  ];
+  document.getElementById('ac-detail-body').innerHTML = fields.map(([k,v]) =>
+    `<div style="display:flex;gap:6px"><span style="color:var(--dim);width:78px;flex-shrink:0">${k}</span><span style="color:${k==='SQUAWK'&&em?'var(--red)':k==='CALLSIGN'?'var(--cyan)':'var(--text)'}">${v}</span></div>`
+  ).join('');
+  const det = document.getElementById('ac-detail');
+  det.style.display = '';
+  det.style.borderColor = em ? 'var(--red)' : '';
+}
+
 function renderACTable(aircraft) {
-  const sorted = [...aircraft].sort((a,b) => (b.altitude||0)-(a.altitude||0));
-  document.getElementById('ac-tbody').innerHTML = sorted.map(ac => `
-    <tr class="${ac.emergency?'emergency':''}" onclick="map.setView([${ac.lat||HOME_LAT},${ac.lon||HOME_LON}],12)">
-      <td style="color:${ac.emergency?'var(--red)':'var(--cyan)'}">${ac.callsign||ac.icao}</td>
+  const key = SORT_MODES[sortIdx];
+  const sorted = [...aircraft].sort((a,b) => {
+    if (key === 'altitude') return (b.altitude||0)-(a.altitude||0);
+    if (key === 'speed')    return (b.speed||0)-(a.speed||0);
+    if (key === 'callsign') return (a.callsign||a.icao).localeCompare(b.callsign||b.icao);
+    if (key === 'squawk')   return (a.squawk||'9999').localeCompare(b.squawk||'9999');
+    return 0;
+  });
+  document.getElementById('ac-tbody').innerHTML = sorted.map(ac => {
+    const em = ac.emergency;
+    const sel = ac.icao === selectedIcao;
+    return `<tr class="${em?'emergency':''}" style="${sel?'background:rgba(0,204,255,0.1);outline:1px solid var(--cyan);':''}" onclick="selectAircraft('${ac.icao}')">
+      <td style="color:${em?'var(--red)':sel?'var(--green)':'var(--cyan)'};font-weight:${sel?'bold':'normal'}">${ac.callsign||'—'}</td>
+      <td style="color:var(--dim);font-size:10px">${ac.icao}</td>
       <td>${ac.altitude != null ? ac.altitude.toLocaleString() : '—'}</td>
       <td>${ac.speed != null ? Math.round(ac.speed) : '—'}</td>
-      <td class="${ac.emergency?'squawk-em':''}">${ac.squawk||'—'}</td>
-    </tr>`).join('');
+      <td style="color:var(--dim)">${ac.heading != null ? ac.heading+'°' : '—'}</td>
+      <td class="${em?'squawk-em':''}">${ac.squawk||'—'}</td>
+    </tr>`;
+  }).join('');
 }
 
 // ── Freq Book ────────────────────────────────────────────────────────────────
