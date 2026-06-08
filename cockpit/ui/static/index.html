@@ -376,10 +376,27 @@ tr.emergency td{color:var(--red);font-weight:bold}
   <div id="right-panel">
     <div class="rpanel-section">
       <h3>RECEIVER</h3>
-      <div id="tune-display">
-        <div id="tune-freq">— — —</div>
-        <div id="tune-meta">select a frequency</div>
+      <div style="display:flex;gap:4px;margin-bottom:5px;align-items:center">
+        <input type="number" id="rx-freq-input" placeholder="MHz" step="0.001" min="0.5" max="1766"
+          style="flex:1;background:var(--bg3);border:1px solid var(--border);color:var(--text);
+                 padding:4px 6px;font-family:var(--font);font-size:12px;border-radius:2px;outline:none;min-width:0"
+          onfocus="this.style.borderColor='var(--cyan)'" onblur="this.style.borderColor='var(--border)'"
+          onkeydown="if(event.key==='Enter')startRX()">
+        <select id="rx-mode-select"
+          style="background:var(--bg3);border:1px solid var(--border);color:var(--text);
+                 padding:4px 4px;font-family:var(--font);font-size:11px;border-radius:2px;outline:none;flex-shrink:0">
+          <option value="FM">NFM</option>
+          <option value="WFM">WFM</option>
+          <option value="AM">AM</option>
+          <option value="USB">USB</option>
+          <option value="LSB">LSB</option>
+        </select>
       </div>
+      <div class="btn-row" style="margin-bottom:6px">
+        <button class="btn primary" onclick="startRX()" style="flex:1">▶ START RX</button>
+        <button class="btn danger" onclick="stopVoice()">■</button>
+      </div>
+      <div id="tune-meta" style="color:var(--dim);font-size:10px;margin-bottom:4px;min-height:14px"></div>
       <div id="sig-meter-wrap"><div id="sig-meter"></div></div>
       <div id="sig-label">SIGNAL: —</div>
       <div class="slider-row">
@@ -391,9 +408,6 @@ tr.emergency td{color:var(--red);font-weight:bold}
         <label>VOLUME</label>
         <input type="range" id="vol-slider" min="0" max="1" step="0.05" value="0.8" oninput="setVolume()">
         <span class="slider-val" id="vol-val">80%</span>
-      </div>
-      <div class="btn-row">
-        <button class="btn danger" onclick="stopVoice()" style="flex:1">■ STOP RX</button>
       </div>
     </div>
 
@@ -640,8 +654,7 @@ async function standby(){
   if(sweepPollTimer){clearInterval(sweepPollTimer);sweepPollTimer=null;}
   await fetch('/api/sweep/stop',{method:'POST'});
   activeFreq=null;
-  document.getElementById('tune-freq').textContent='— — —';
-  document.getElementById('tune-meta').textContent='select a frequency';
+  document.getElementById('tune-meta').textContent='';
   document.getElementById('voice-status').textContent='■ RX OFF';
   document.getElementById('voice-status').style.color='';
   stopAudioStream();
@@ -656,19 +669,35 @@ function setVolume(){
   if(audioCtx){const g=audioCtx._gainNode;if(g)g.gain.value=v;}
 }
 
+// Pre-fill the RX inputs when a freq book entry is clicked, then start
 async function tune(entry){
+  const modeMap={'FM':'FM','NFM':'FM','WFM':'WFM','AM':'AM','USB':'USB','LSB':'LSB'};
+  document.getElementById('rx-freq-input').value=(entry.freq/1e6).toFixed(4);
+  const sel=document.getElementById('rx-mode-select');
+  const mapped=modeMap[entry.mode]||'FM';
+  sel.value=mapped;
+  await startRXWith(entry.freq, mapped, entry.name);
+}
+
+async function startRX(){
+  const mhz=parseFloat(document.getElementById('rx-freq-input').value);
+  if(!mhz){toast('Enter a frequency in MHz',true);return}
+  const mode=document.getElementById('rx-mode-select').value;
+  await startRXWith(Math.round(mhz*1e6), mode, fmtMHz(Math.round(mhz*1e6))+' MHz');
+}
+
+async function startRXWith(freq, mode, name){
   if(!hwProfile||hwProfile.hw_tier===0){toast('No SDR hardware',true);return}
   const squelch=parseInt(document.getElementById('sq-slider').value);
-  specStop(); // release device
+  specStop();
   const r=await fetch('/api/voice/tune',{method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({freq:entry.freq,mode:entry.mode,squelch,name:entry.name})});
+    body:JSON.stringify({freq,mode,squelch,name})});
   const d=await r.json();
   if(!d.ok){toast(d.error,true);return}
-  activeFreq=entry;
+  activeFreq={freq,mode,name};
   renderFreqbook(document.getElementById('freq-filter').value.toLowerCase());
-  document.getElementById('tune-freq').textContent=fmtMHz(entry.freq)+' MHz';
-  document.getElementById('tune-meta').textContent=entry.name+' · '+entry.mode;
-  document.getElementById('voice-status').textContent='● RX '+fmtMHz(entry.freq);
+  document.getElementById('tune-meta').textContent=name+' · '+mode;
+  document.getElementById('voice-status').textContent='● RX '+fmtMHz(freq);
   document.getElementById('voice-status').style.color='var(--green)';
   setDevState('voice');
   startAudioStream();
@@ -677,8 +706,7 @@ async function tune(entry){
 async function stopVoice(){
   await fetch('/api/voice/stop',{method:'POST'});
   activeFreq=null;renderFreqbook('');
-  document.getElementById('tune-freq').textContent='— — —';
-  document.getElementById('tune-meta').textContent='select a frequency';
+  document.getElementById('tune-meta').textContent='';
   document.getElementById('voice-status').textContent='■ RX OFF';
   document.getElementById('voice-status').style.color='';
   stopAudioStream();
